@@ -1,9 +1,9 @@
-package com.paul.okhttpframework.okhttp;
+package com.paul.okhttpframework.okhttp.manager;
 
 import android.util.Log;
 
 import com.paul.okhttpframework.constant.URLConstant;
-import com.paul.okhttpframework.http.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.bean.RequestBean;
 import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;

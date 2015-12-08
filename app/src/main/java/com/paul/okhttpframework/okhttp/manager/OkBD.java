@@ -1,11 +1,10 @@
-package com.paul.okhttpframework.okhttp;
+package com.paul.okhttpframework.okhttp.manager;
 
 import com.paul.okhttpframework.application.MyApp;
-import com.paul.okhttpframework.http.bean.ErrorBean;
-import com.paul.okhttpframework.http.bean.RequestBean;
-import com.paul.okhttpframework.http.callback.IntParseCallback;
-import com.paul.okhttpframework.http.callback.IntResultCallback;
-import com.paul.okhttpframework.http.manager.JsonParse;
+import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.callback.IntParseCallback;
+import com.paul.okhttpframework.okhttp.callback.IntResultCallback;
 import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.T;
 import com.squareup.okhttp.Callback;

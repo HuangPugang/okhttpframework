@@ -1,4 +1,4 @@
-package com.paul.okhttpframework.http.callback;
+package com.paul.okhttpframework.okhttp.callback;
 
 /**
  * 

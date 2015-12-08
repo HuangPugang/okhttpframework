@@ -1,8 +1,8 @@
-package com.paul.okhttpframework.okhttp;
+package com.paul.okhttpframework.okhttp.manager;
 
 
 import com.paul.okhttpframework.constant.URLConstant;
-import com.paul.okhttpframework.http.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.bean.RequestBean;
 
 import java.util.Map;
 

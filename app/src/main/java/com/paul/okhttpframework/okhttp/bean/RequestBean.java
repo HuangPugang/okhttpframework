@@ -1,4 +1,4 @@
-package com.paul.okhttpframework.http.bean;
+package com.paul.okhttpframework.okhttp.bean;
 
 import java.util.Map;
 

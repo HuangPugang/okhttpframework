@@ -1,7 +1,7 @@
-package com.paul.okhttpframework.http.callback;
+package com.paul.okhttpframework.okhttp.callback;
 
 
-import com.paul.okhttpframework.http.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.ErrorBean;
 
 /**
  * 

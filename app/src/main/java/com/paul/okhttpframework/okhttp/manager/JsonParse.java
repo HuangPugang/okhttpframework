@@ -1,11 +1,11 @@
-package com.paul.okhttpframework.http.manager;
+package com.paul.okhttpframework.okhttp.manager;
 
 import android.util.Log;
 
 
 import com.paul.okhttpframework.constant.URLConstant;
-import com.paul.okhttpframework.http.bean.ErrorBean;
-import com.paul.okhttpframework.http.callback.IntParseCallback;
+import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.callback.IntParseCallback;
 import com.paul.okhttpframework.util.StringUtils;
 
 import org.json.JSONArray;
