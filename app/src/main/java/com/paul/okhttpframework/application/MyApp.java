@@ -12,14 +12,15 @@ public class MyApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        inti();
+        init();
     }
 
-    private void inti(){
+    private void init(){
         mAppContext = getApplicationContext();
     }
 
     public static Context getMyAppContext(){
         return mAppContext;
     }
+
 }

@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
-import com.paul.okhttpframework.okhttp.callback.IntParseCallback;
+import com.paul.okhttpframework.okhttp.callback.IParseCallback;
 import com.paul.okhttpframework.util.StringUtils;
 
 import org.json.JSONArray;
@@ -37,7 +37,7 @@ public class JsonParse {
         return instance;
     }
 
-    public static void JsonParseData(int tag, String jsonString,  IntParseCallback callback) throws JSONException {
+    public static void JsonParseData(int tag, String jsonString,  IParseCallback callback) throws JSONException {
 
         try {
             JSONObject jsonObject = new JSONObject(jsonString);//这里报错，说明是下面解析时出现了错误
@@ -86,9 +86,12 @@ public class JsonParse {
     /*
      * 作为公用的成功回调
      */
-    public static void jsonParseHealthNewsList(JSONObject jsonObject, int tag, IntParseCallback callback) throws JSONException {
+    public static void jsonParseHealthNewsList(JSONObject jsonObject, int tag, IParseCallback callback) throws JSONException {
         if (callback != null) {
             JSONArray array = jsonObject.optJSONArray("tngou");
+            Log.e("HPGss",jsonObject.toString());
+            callback.onSuccess(jsonObject.toString(),tag);
+
 
         } else {
             Log.i(TAG, "intjason == null");
@@ -98,7 +101,7 @@ public class JsonParse {
     /*
      * 作为公用的成功回调
      */
-    public static void jsonParseSuccessCommon(JSONObject jsonObject, int tag, IntParseCallback callback) throws JSONException {
+    public static void jsonParseSuccessCommon(JSONObject jsonObject, int tag, IParseCallback callback) throws JSONException {
         if (callback != null) {
             callback.onSuccess("", tag);
         } else {

@@ -6,11 +6,19 @@ import com.paul.okhttpframework.okhttp.bean.RequestBean;
 
 import java.util.Map;
 
-
+/**
+ * 请求数据管理类
+ */
 public class RequestBeanManager {
 
 	private final static String TAG = RequestBeanManager.class.getSimpleName();
 
+	/**
+	 * 根据不同的tag获得不同的请求bean
+	 * @param tag
+	 * @param params
+	 * @return
+	 */
 	public static RequestBean getRequestBean(int tag, Map<String, String> params) {
 		switch (tag) {
 			case URLConstant.TAG_GET_HEALTH_NEWS_LIST:

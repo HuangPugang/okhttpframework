@@ -10,7 +10,7 @@ import com.paul.okhttpframework.okhttp.bean.ErrorBean;
  * @author Wen
  * @data: 2015-9-2 下午2:38:36
  */
-public interface IntParseCallback {
+public interface IParseCallback {
 
 	// 成功回调
 	public void onSuccess(Object object, int tag);

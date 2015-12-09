@@ -6,9 +6,14 @@ import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
 import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -84,6 +89,20 @@ public class OkhttpManager {
                         final Map<String, String> params,
                         com.squareup.okhttp.Callback callback) throws Exception{
 
+        FormEncodingBuilder builder = new FormEncodingBuilder();
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                builder.add(entry.getKey(), entry.getValue());
+            }
+        }
+        RequestBody formBody = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(formBody)
+                .build();
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(callback);
     }
 
 

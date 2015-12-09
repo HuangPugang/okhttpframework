@@ -22,6 +22,6 @@ public class ErrorBean {
 
 	@Override
 	public String toString() {
-		return "IntParseCallback [error=" + error + ", msg=" + msg + "]";
+		return "IParseCallback [error=" + error + ", msg=" + msg + "]";
 	}
 }
