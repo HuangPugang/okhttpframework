@@ -4,11 +4,7 @@ package com.paul.okhttpframework.okhttp.callback;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
 
 /**
- * 
- * TODO<用于所有Json数据解析回调>
- * 
- * @author Wen
- * @data: 2015-9-2 下午2:38:36
+ * 解析
  */
 public interface IParseCallback {
 

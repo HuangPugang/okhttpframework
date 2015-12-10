@@ -1,12 +1,7 @@
 package com.paul.okhttpframework.okhttp.callback;
 
 /**
- * 
- * TODO<Volly 请求结果回调>
- * 
- * @author Wen
- * @data: 2015-9-2 下午2:39:36
- * @version: V1.0
+ * 请求结果
  */
 public interface IResultCallback {
 
