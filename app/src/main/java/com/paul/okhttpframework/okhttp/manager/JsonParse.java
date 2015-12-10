@@ -55,7 +55,6 @@ public class JsonParse {
             } else {
                 switch (tag) {
                     case URLConstant.TAG_GET_HEALTH_NEWS_LIST:
-                    case URLConstant.TAG_GET_HEALTH_NEWS_LOAD_MORE:
                         jsonParseHealthNewsList(jsonObject, tag, callback);
                         break;
 
