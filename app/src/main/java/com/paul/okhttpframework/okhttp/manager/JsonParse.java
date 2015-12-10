@@ -6,7 +6,7 @@ import android.util.Log;
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
 import com.paul.okhttpframework.okhttp.callback.IParseCallback;
-import com.paul.okhttpframework.util.StringUtils;
+import com.paul.okhttpframework.util.StrUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -135,11 +135,11 @@ public class JsonParse {
     //判断是否有JSONEobect对象并且不为空
 
     private static boolean hasJSONEobect(String key, JSONObject jsonObject) {
-        if (jsonObject.has(key) && !StringUtils.isEmpty(getStringByKey(key, jsonObject))) {
+        if (jsonObject.has(key) && !StrUtils.isEmpty(getStringByKey(key, jsonObject))) {
             return true;
         } else {
             if (jsonObject.has(key)) {
-                if (StringUtils.isEmpty(getStringByKey(key, jsonObject))) {
+                if (StrUtils.isEmpty(getStringByKey(key, jsonObject))) {
                     Log.e(TAG, "==================key=" + key + "的对象存在，但是为空==============");
                 }
             }

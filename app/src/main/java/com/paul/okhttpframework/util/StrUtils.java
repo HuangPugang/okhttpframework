@@ -1,19 +1,16 @@
 package com.paul.okhttpframework.util;
 
-
 import java.lang.reflect.Array;
 import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
-/**
- * Created by Paul on 15/12/2.
- */
 public class StrUtils {
 
 
     /**
-     * TODO<判断字符串为空>
+     * 判断字符串为空
      *
      * @param str
      * @return boolean
@@ -21,14 +18,15 @@ public class StrUtils {
      */
     public static boolean isEmpty(CharSequence str) {
         if (str == null || str.length() == 0 || str.equals("")
-                || str.equals("null"))
+                || str.equals("null")) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 
     /**
-     * TODO<清理空字符串>
+     * 清理空字符串
      *
      * @param str
      * @return String
@@ -125,5 +123,18 @@ public class StrUtils {
             return "0.00";
         }
         return fnum.format(Float.parseFloat(s));
+    }
+
+    //set转String
+    public static String setToString(Set set, String separator) {
+        if (set == null || set.isEmpty()) {
+            return "";
+        }
+        StringBuffer sb = new StringBuffer();
+        for (Object o : set) {
+            sb.append(o == null ? "null" : o.toString()).append(separator);
+        }
+        return sb.toString();
+
     }
 }

@@ -1,5 +1,8 @@
 package com.paul.okhttpframework.okhttp.bean;
 
+/**
+ * 可根据实际情况进行调整
+ */
 public class ErrorBean {
 	public String error;
 	public String msg;
