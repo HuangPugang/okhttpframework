@@ -126,7 +126,7 @@ public class OkBD {
                 @Override
                 public void onResponse(Response response) throws IOException {
                     try {
-                        JsonParse.JsonParseData(tag, response.body().string(),
+                        JsonParseManager.JsonParseData(tag, response.body().string(),
                                 new IParseCallback() {
                                     // 解析成功回调
                                     @Override

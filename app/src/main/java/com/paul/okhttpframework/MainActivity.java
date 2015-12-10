@@ -3,6 +3,7 @@ package com.paul.okhttpframework;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
@@ -10,6 +11,7 @@ import com.paul.okhttpframework.okhttp.callback.IResultCallback;
 import com.paul.okhttpframework.okhttp.manager.OkBD;
 import com.paul.okhttpframework.okhttp.manager.ParamManager;
 import com.paul.okhttpframework.okhttp.manager.RequestBeanManager;
+import com.paul.okhttpframework.util.T;
 
 import java.util.HashMap;
 
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
 
     @Override
     public void onSuccessResult(Object object, int tag) {
-        Log.e("HPG",object.toString());
+        T.show(this,object.toString(), Toast.LENGTH_SHORT);
     }
 
     @Override

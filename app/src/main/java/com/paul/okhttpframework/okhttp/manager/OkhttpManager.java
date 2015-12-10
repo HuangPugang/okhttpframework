@@ -152,7 +152,7 @@ public class OkhttpManager {
 
 
     /**
-     * 网络突然断开回调，在BD中
+     * 网络突然断开回调，在OKBD中
      */
 
     public interface OnNetConnectListener {
