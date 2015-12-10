@@ -5,8 +5,9 @@ import android.util.Log;
 
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 import com.paul.okhttpframework.okhttp.callback.IParseCallback;
-import com.paul.okhttpframework.util.StringUtils;
+import com.paul.okhttpframework.util.StrUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,7 +41,7 @@ public class JsonParseManager {
         return instance;
     }
 
-    public static void JsonParseData(int tag, String jsonString,  IParseCallback callback) throws JSONException {
+    public static void JsonParseData(TagBean tag, String jsonString,  IParseCallback callback) throws JSONException {
 
         try {
             JSONObject jsonObject = new JSONObject(jsonString);//这里报错，说明是下面解析时出现了错误
@@ -49,16 +50,15 @@ public class JsonParseManager {
                 errorBean.setError(jsonObject.optString("error"));
                 errorBean.setMsg(jsonObject.optString("msg"));
                 if (callback != null) {
-                    callback.onFailure(errorBean, tag);
+                    callback.onFailure(tag , errorBean);
                     Log.i(TAG, "解析error回调");
                 } else {
                     Log.i(TAG, "intjason == null");
                 }
 
             } else {
-                switch (tag) {
+                switch (tag.getTag()) {
                     case URLConstant.TAG_GET_HEALTH_NEWS_LIST:
-                    case URLConstant.TAG_GET_HEALTH_NEWS_LOAD_MORE:
                         jsonParseHealthNewsList(jsonObject, tag, callback);
                         break;
 
@@ -74,7 +74,7 @@ public class JsonParseManager {
             errorBean.setMsg("程序猿们累得打瞌了，我们马上叫醒他们，请稍后再试");
 
             if (callback != null) {
-                callback.onFailure(errorBean, tag);
+                callback.onFailure(tag , errorBean);
                 Log.e(TAG, "程序猿们累得打瞌了，我们马上叫醒他们，请稍后再试=" + "tag=" + tag + "   " + jsonString);
 
             } else {
@@ -89,11 +89,11 @@ public class JsonParseManager {
     /*
      * 作为公用的成功回调
      */
-    public static void jsonParseHealthNewsList(JSONObject jsonObject, int tag, IParseCallback callback) throws JSONException {
+    public static void jsonParseHealthNewsList(JSONObject jsonObject, TagBean tag, IParseCallback callback) throws JSONException {
         if (callback != null) {
             JSONArray array = jsonObject.optJSONArray("tngou");
             Log.e("HPGss",jsonObject.toString());
-            callback.onSuccess(jsonObject.toString(),tag);
+            callback.onSuccess(tag, jsonObject.toString());
 
 
         } else {
@@ -104,9 +104,9 @@ public class JsonParseManager {
     /*
      * 作为公用的成功回调
      */
-    public static void jsonParseSuccessCommon(JSONObject jsonObject, int tag, IParseCallback callback) throws JSONException {
+    public static void jsonParseSuccessCommon(JSONObject jsonObject, TagBean tag, IParseCallback callback) throws JSONException {
         if (callback != null) {
-            callback.onSuccess("", tag);
+            callback.onSuccess(tag,"");
         } else {
             Log.i(TAG, "intjason == null");
         }
@@ -138,11 +138,11 @@ public class JsonParseManager {
     //判断是否有JSONEobect对象并且不为空
 
     private static boolean hasJSONEobect(String key, JSONObject jsonObject) {
-        if (jsonObject.has(key) && !StringUtils.isEmpty(getStringByKey(key, jsonObject))) {
+        if (jsonObject.has(key) && !StrUtils.isEmpty(getStringByKey(key, jsonObject))) {
             return true;
         } else {
             if (jsonObject.has(key)) {
-                if (StringUtils.isEmpty(getStringByKey(key, jsonObject))) {
+                if (StrUtils.isEmpty(getStringByKey(key, jsonObject))) {
                     Log.e(TAG, "==================key=" + key + "的对象存在，但是为空==============");
                 }
             }

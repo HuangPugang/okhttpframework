@@ -1,5 +1,6 @@
 # okhttpframework
-network frame base on okhttp
+network frame base on okhttp,
+首先，非常感谢小纹同学，结合了他的做法，对okhttp进行了封装
 
 #HOW TO USE
 #示例

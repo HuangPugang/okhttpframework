@@ -2,20 +2,17 @@ package com.paul.okhttpframework.okhttp.callback;
 
 
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 
 /**
- * 
- * TODO<用于所有Json数据解析回调>
- * 
- * @author Wen
- * @data: 2015-9-2 下午2:38:36
+ * 解析
  */
 public interface IParseCallback {
 
 	// 成功回调
-	public void onSuccess(Object object, int tag);
+	public void onSuccess(TagBean tag, Object object);
 
 	// 失败回调
-	public void onFailure(ErrorBean errorBean, int tag);
+	public void onFailure(TagBean tag, ErrorBean errorBean);
 
 }

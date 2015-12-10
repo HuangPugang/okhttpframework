@@ -5,7 +5,9 @@ import android.os.Message;
 
 import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.HandlerBean;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 import com.paul.okhttpframework.okhttp.callback.IParseCallback;
 import com.paul.okhttpframework.okhttp.callback.IResultCallback;
 import com.paul.okhttpframework.util.L;
@@ -26,7 +28,7 @@ import java.util.Map;
  */
 public class OkBD {
     private static String TAG = OkBD.class.getSimpleName();
-    private static HashMap<Integer, IResultCallback> mCallbackHashMap = new HashMap<Integer, IResultCallback>();
+    private static HashMap<TagBean, IResultCallback> mCallbackHashMap = new HashMap<TagBean, IResultCallback>();
 
     /**
      * TODO<结果回调注册>
@@ -36,7 +38,7 @@ public class OkBD {
      * @return void
      * @throw
      */
-    public static void setIntResultCallback(IResultCallback iResultCallback, int tag) {
+    public static void setIntResultCallback(IResultCallback iResultCallback, TagBean tag) {
         mCallbackHashMap.put(tag, iResultCallback);
 
     }
@@ -49,11 +51,11 @@ public class OkBD {
      * @return IResultCallback
      * @throw
      */
-    public static IResultCallback traverseFindAndRemoveHashMap(int tag) {
-        Iterator<Map.Entry<Integer, IResultCallback>> iter = mCallbackHashMap
+    public static IResultCallback traverseFindAndRemoveHashMap(TagBean tag) {
+        Iterator<Map.Entry<TagBean, IResultCallback>> iter = mCallbackHashMap
                 .entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry<Integer, IResultCallback> entry = (Map.Entry<Integer, IResultCallback>) iter
+            Map.Entry<TagBean, IResultCallback> entry = (Map.Entry<TagBean, IResultCallback>) iter
                     .next();
             if (entry.getKey() == tag) {
                 IResultCallback iResultCallback = entry.getValue();
@@ -73,11 +75,10 @@ public class OkBD {
      * @return IResultCallback
      * @throw
      */
-    public static IResultCallback getAndRemoveHashMap(int tag) {
+    public static IResultCallback getAndRemoveHashMap(TagBean tag) {
         if (mCallbackHashMap.containsKey(tag)) {
             IResultCallback iResultCallback = mCallbackHashMap.get(tag);
             L.i(TAG, "Befor_removeTag_HashMap.size===" + mCallbackHashMap.size());
-
             return iResultCallback;
         }
         return null;
@@ -92,7 +93,7 @@ public class OkBD {
      * @return void
      * @throw
      */
-    public static void traverseRemoveHashMap(int tag) {
+    public static void traverseRemoveHashMap(TagBean tag) {
         mCallbackHashMap.remove(tag);
     }
 
@@ -105,13 +106,13 @@ public class OkBD {
      * @return void
      * @throw
      */
-    public static void businessDispatch(int tag, RequestBean requestBean, IResultCallback iResultCallback) {
+    public static void businessDispatch(TagBean tag, RequestBean requestBean, IResultCallback iResultCallback) {
         setIntResultCallback(iResultCallback, tag);
         sendRequest(requestBean, tag);
     }
 
 
-    private static void sendRequest(RequestBean requestBean, final int tag) {
+    private static void sendRequest(RequestBean requestBean, final TagBean tag) {
         try {
 
             OkhttpManager.getInstance().request(requestBean, new Callback() {
@@ -130,13 +131,13 @@ public class OkBD {
                                 new IParseCallback() {
                                     // 解析成功回调
                                     @Override
-                                    public void onSuccess(Object object, int tag) {
+                                    public void onSuccess(TagBean tag, Object object) {
                                         sendSuccessMessage(tag, object);
                                     }
 
                                     // 解析失败回调
                                     @Override
-                                    public void onFailure(ErrorBean errorBean, int tag) {
+                                    public void onFailure(TagBean tag, ErrorBean errorBean) {
                                         sendFailedMessage(tag, errorBean);
                                     }
                                 });
@@ -160,25 +161,30 @@ public class OkBD {
         }
     }
 
-    private static void sendSuccessMessage(int tag, Object object) {
+    private static void sendSuccessMessage(TagBean tag, Object object) {
         Message message = Message.obtain();
-        message.arg1 = tag;
-        message.obj = object;
+        HandlerBean handlerBean = new HandlerBean(tag,object);
+        message.obj = handlerBean;
         handlerSuccess.sendMessage(message);
     }
 
-    private static void sendFailedMessage(int tag, ErrorBean errorBean) {
-
+    private static void sendFailedMessage(TagBean tag, ErrorBean errorBean) {
+        Message message = Message.obtain();
+        HandlerBean handlerBean = new HandlerBean(tag,errorBean);
+        message.obj = handlerBean;
+        handlerFailed.sendMessage(message);
     }
 
     private static Handler handlerSuccess = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            int tag = msg.arg1;
-            Object object = msg.obj;
+            HandlerBean handlerBean = (HandlerBean) msg.obj;
+            TagBean tag = handlerBean.getTagBean();
+            Object object = handlerBean.getObject();
             IResultCallback iResultCallback = getAndRemoveHashMap(tag);
-            iResultCallback.onSuccessResult(object, tag);
-
+            if (tag!=null) {
+                iResultCallback.onSuccessResult(tag.getTag(), object);
+            }
 
         }
     };
@@ -186,10 +192,13 @@ public class OkBD {
     private static Handler handlerFailed = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            int tag = msg.arg1;
-            ErrorBean errorBean = (ErrorBean) msg.obj;
+            HandlerBean handlerBean = (HandlerBean) msg.obj;
+            ErrorBean errorBean = (ErrorBean) handlerBean.getObject();
+            TagBean tag = handlerBean.getTagBean();
             IResultCallback iResultCallback = getAndRemoveHashMap(tag);
-            iResultCallback.onFailureResult(errorBean, tag);
+            if (tag!=null) {
+                iResultCallback.onFailureResult(tag.getTag(), errorBean);
+            }
         }
     };
 

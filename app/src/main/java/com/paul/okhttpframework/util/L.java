@@ -3,14 +3,8 @@ package com.paul.okhttpframework.util;
 import android.util.Log;
 
 /**
- * Log统一管理类
- * 
- * @author wen
- * @version 2015年1月16日
- * @see L
- * @since
+ * 日志打印类
  */
-
 public class L {
 
 	public final static int VERBOSE = 5; // 不过滤输出所有调试信息 包括

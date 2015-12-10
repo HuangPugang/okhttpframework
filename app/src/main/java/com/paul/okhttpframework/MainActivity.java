@@ -6,10 +6,12 @@ import android.util.Log;
 
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 import com.paul.okhttpframework.okhttp.callback.IResultCallback;
 import com.paul.okhttpframework.okhttp.manager.OkBD;
 import com.paul.okhttpframework.okhttp.manager.ParamManager;
 import com.paul.okhttpframework.okhttp.manager.RequestBeanManager;
+import com.paul.okhttpframework.util.T;
 
 import java.util.HashMap;
 
@@ -28,17 +30,18 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
     private void sendRequest(){
         HashMap<String,String> params = ParamManager.getXxxParam("1","5");
         RequestBean requestBean = RequestBeanManager.getRequestBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST,params);
-        OkBD.businessDispatch(URLConstant.TAG_GET_HEALTH_NEWS_LIST,requestBean,this);
+        OkBD.businessDispatch(new TagBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST),requestBean,this);
 
     }
 
     @Override
-    public void onSuccessResult(Object object, int tag) {
+    public void onSuccessResult(int tag, Object object) {
+        T.showShort(this,object.toString());
         Log.e("HPG",object.toString());
     }
 
     @Override
-    public void onFailureResult(Object object, int tag) {
+    public void onFailureResult(int tag, Object object) {
 
     }
 }

@@ -8,18 +8,21 @@ import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.internal.framed.Header;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Paul on 15/12/8.
+ * okhttp管理类
  */
 public class OkhttpManager {
 
@@ -28,6 +31,9 @@ public class OkhttpManager {
     private static OkHttpClient mOkHttpClient;
     private OkhttpManager() {
         mOkHttpClient = new OkHttpClient();
+        mOkHttpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
+        mOkHttpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
+        mOkHttpClient.setWriteTimeout(10000, TimeUnit.MILLISECONDS);
     }
 
     public static OkhttpManager getInstance() {
@@ -77,7 +83,16 @@ public class OkhttpManager {
             requestUrl = url;
         }
         Log.e(TAG, requestUrl);
-        Request request = new Request.Builder()
+        Request.Builder requestBuilder = new Request.Builder();
+        if (null!=headers&&headers.size()!=0){
+            for (Map.Entry<String,String> entry : params.entrySet()){
+                if (entry.getKey() != null && entry.getValue() != null){
+                    requestBuilder.header(entry.getKey(), entry.getValue());
+                }
+            }
+
+        }
+        Request request = requestBuilder
                 .url(requestUrl)
                 .build();
         Call call = mOkHttpClient.newCall(request);
@@ -97,7 +112,17 @@ public class OkhttpManager {
             }
         }
         RequestBody formBody = builder.build();
-        Request request = new Request.Builder()
+
+        Request.Builder requestBuilder = new Request.Builder();
+        if (null!=headers&&headers.size()!=0){
+            for (Map.Entry<String,String> entry : params.entrySet()){
+                if (entry.getKey() != null && entry.getValue() != null){
+                    requestBuilder.header(entry.getKey(), entry.getValue());
+                }
+            }
+
+        }
+        Request request = requestBuilder
                 .url(url)
                 .post(formBody)
                 .build();
