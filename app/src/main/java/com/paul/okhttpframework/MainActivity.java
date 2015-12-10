@@ -24,19 +24,22 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sendRequest();
+        for (int i=0;i<100;i++) {
+            sendRequest();
+        }
+
     }
 
     private void sendRequest(){
         HashMap<String,String> params = ParamManager.getXxxParam("1","5");
         RequestBean requestBean = RequestBeanManager.getRequestBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST,params);
-        OkBD.businessDispatch(new TagBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST),requestBean,this);
+        OkBD.businessDispatch(new TagBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST), requestBean, this);
 
     }
 
     @Override
     public void onSuccessResult(int tag, Object object) {
-        T.showShort(this,object.toString());
+//        T.showShort(this,object.toString());
         Log.e("HPG",object.toString());
     }
 

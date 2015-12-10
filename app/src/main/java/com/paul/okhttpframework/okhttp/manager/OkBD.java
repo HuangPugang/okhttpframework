@@ -2,6 +2,7 @@ package com.paul.okhttpframework.okhttp.manager;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
@@ -30,9 +31,23 @@ public class OkBD {
     private static String TAG = OkBD.class.getSimpleName();
     private static HashMap<TagBean, IResultCallback> mCallbackHashMap = new HashMap<TagBean, IResultCallback>();
 
+
+    private static OkBD instance = null;
+
+    private OkBD() {
+
+    }
+    public static OkBD getInstance() {
+        if (null == instance) {
+            synchronized (OkBD.class) {
+                if (null == instance) {
+                    instance = new OkBD();
+                }
+            }
+        }
+        return instance;
+    }
     /**
-     * TODO<结果回调注册>
-     *
      * @param iResultCallback
      * @param tag
      * @return void
@@ -44,9 +59,6 @@ public class OkBD {
     }
 
     /**
-     * TODO< Traverse the HashMap to return the CallBack and remove it from the
-     * HashMap when the tag matches>
-     *
      * @param tag
      * @return IResultCallback
      * @throw
@@ -68,9 +80,6 @@ public class OkBD {
     }
 
     /**
-     * TODO< Traverse the HashMap to return the CallBack and remove it from the map
-     * HashMap when the tag matches>
-     *
      * @param tag
      * @return IResultCallback
      * @throw
@@ -78,6 +87,7 @@ public class OkBD {
     public static IResultCallback getAndRemoveHashMap(TagBean tag) {
         if (mCallbackHashMap.containsKey(tag)) {
             IResultCallback iResultCallback = mCallbackHashMap.get(tag);
+            mCallbackHashMap.remove(tag);
             L.i(TAG, "Befor_removeTag_HashMap.size===" + mCallbackHashMap.size());
             return iResultCallback;
         }
@@ -86,9 +96,6 @@ public class OkBD {
     }
 
     /**
-     * TODO<Traverse the HashMap to remove it from the HashMap when the tag
-     * matches>
-     *
      * @param tag
      * @return void
      * @throw
@@ -99,8 +106,6 @@ public class OkBD {
 
 
     /**
-     * TODO<业务逻辑任务分发>
-     *
      * @param tag         业务标志
      * @param requestBean 参数
      * @return void
@@ -163,14 +168,16 @@ public class OkBD {
 
     private static void sendSuccessMessage(TagBean tag, Object object) {
         Message message = Message.obtain();
-        HandlerBean handlerBean = new HandlerBean(tag,object);
+        IResultCallback iResultCallback = getAndRemoveHashMap(tag);
+        HandlerBean handlerBean = new HandlerBean(tag,object,iResultCallback);
         message.obj = handlerBean;
         handlerSuccess.sendMessage(message);
     }
 
     private static void sendFailedMessage(TagBean tag, ErrorBean errorBean) {
+        IResultCallback iResultCallback = getAndRemoveHashMap(tag);
+        HandlerBean handlerBean = new HandlerBean(tag,errorBean,iResultCallback);
         Message message = Message.obtain();
-        HandlerBean handlerBean = new HandlerBean(tag,errorBean);
         message.obj = handlerBean;
         handlerFailed.sendMessage(message);
     }
@@ -181,8 +188,9 @@ public class OkBD {
             HandlerBean handlerBean = (HandlerBean) msg.obj;
             TagBean tag = handlerBean.getTagBean();
             Object object = handlerBean.getObject();
-            IResultCallback iResultCallback = getAndRemoveHashMap(tag);
+            IResultCallback iResultCallback = handlerBean.getiResultCallback();
             if (tag!=null) {
+                Log.e(TAG,"mCallbackHashMap.size()"+mCallbackHashMap.size());
                 iResultCallback.onSuccessResult(tag.getTag(), object);
             }
 
@@ -195,7 +203,7 @@ public class OkBD {
             HandlerBean handlerBean = (HandlerBean) msg.obj;
             ErrorBean errorBean = (ErrorBean) handlerBean.getObject();
             TagBean tag = handlerBean.getTagBean();
-            IResultCallback iResultCallback = getAndRemoveHashMap(tag);
+            IResultCallback iResultCallback = handlerBean.getiResultCallback();
             if (tag!=null) {
                 iResultCallback.onFailureResult(tag.getTag(), errorBean);
             }
