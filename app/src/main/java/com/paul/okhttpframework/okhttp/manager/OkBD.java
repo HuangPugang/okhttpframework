@@ -106,7 +106,7 @@ public class OkBD {
      * @throw
      */
     public static void businessDispatch(int tag, RequestBean requestBean, IResultCallback iResultCallback) {
-        setIntResultCallback(iResultCallback,tag);
+        setIntResultCallback(iResultCallback, tag);
         sendRequest(requestBean, tag);
     }
 
@@ -126,7 +126,7 @@ public class OkBD {
                 @Override
                 public void onResponse(Response response) throws IOException {
                     try {
-                        JsonParse.JsonParseData(tag, response.body().string(),
+                        JsonParseManager.JsonParseData(tag, response.body().string(),
                                 new IParseCallback() {
                                     // 解析成功回调
                                     @Override

@@ -17,20 +17,23 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class JsonParse {
+/**
+ * json解析
+ */
+public class JsonParseManager {
 
-    public static String TAG = JsonParse.class.getSimpleName();
-    private static JsonParse instance = null;
+    public static String TAG = JsonParseManager.class.getSimpleName();
+    private static JsonParseManager instance = null;
 
-    private JsonParse() {
+    private JsonParseManager() {
 
     }
 
-    public static JsonParse getInstance() {
+    public static JsonParseManager getInstance() {
         if (null == instance) {
-            synchronized (JsonParse.class) {
+            synchronized (JsonParseManager.class) {
                 if (null == instance) {
-                    instance = new JsonParse();
+                    instance = new JsonParseManager();
                 }
             }
         }
