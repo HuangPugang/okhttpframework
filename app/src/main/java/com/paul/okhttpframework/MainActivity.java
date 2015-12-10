@@ -1,5 +1,6 @@
 package com.paul.okhttpframework;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,11 +32,11 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
         HashMap<String,String> params = ParamManager.getXxxParam("1","5");
         RequestBean requestBean = RequestBeanManager.getRequestBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST,params);
         OkBD.businessDispatch(URLConstant.TAG_GET_HEALTH_NEWS_LIST,requestBean,this);
-
     }
 
     @Override
     public void onSuccessResult(Object object, int tag) {
+
         T.show(this,object.toString(), Toast.LENGTH_SHORT);
     }
 

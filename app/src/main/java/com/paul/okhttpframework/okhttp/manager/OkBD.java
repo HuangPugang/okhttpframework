@@ -25,18 +25,16 @@ import java.util.Map;
  * Created by Paul on 15/12/8.
  */
 public class OkBD {
-    private static String TAG = OkBD.class.getSimpleName();
-    private static HashMap<Integer, IResultCallback> mCallbackHashMap = new HashMap<Integer, IResultCallback>();
+    private static                  String                                  TAG = OkBD.class.getSimpleName();
+    private static                  HashMap<Integer, IResultCallback>       mCallbackHashMap = new HashMap<Integer, IResultCallback>();
 
     /**
-     * TODO<结果回调注册>
-     *
      * @param iResultCallback
      * @param tag
      * @return void
      * @throw
      */
-    public static void setIntResultCallback(IResultCallback iResultCallback, int tag) {
+    public static void setIntResultCallback(int tag ,IResultCallback iResultCallback) {
         mCallbackHashMap.put(tag, iResultCallback);
 
     }
@@ -106,14 +104,13 @@ public class OkBD {
      * @throw
      */
     public static void businessDispatch(int tag, RequestBean requestBean, IResultCallback iResultCallback) {
-        setIntResultCallback(iResultCallback,tag);
+        setIntResultCallback(tag, iResultCallback);
         sendRequest(requestBean, tag);
     }
 
 
     private static void sendRequest(RequestBean requestBean, final int tag) {
         try {
-
             OkhttpManager.getInstance().request(requestBean, new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
@@ -122,7 +119,6 @@ public class OkBD {
                     errorBean.setMsg("服务器连接异常，请稍后再试");
                     sendFailedMessage(tag, errorBean);
                 }
-
                 @Override
                 public void onResponse(Response response) throws IOException {
                     try {
@@ -167,33 +163,37 @@ public class OkBD {
         handlerSuccess.sendMessage(message);
     }
 
-    private static void sendFailedMessage(int tag, ErrorBean errorBean) {
-        Message message = Message.obtain();
-        message.arg1 = tag;
-        message.obj = errorBean;
-        handlerFailed.sendMessage(message);
-    }
-
     private static Handler handlerSuccess = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int tag = msg.arg1;
             Object object = msg.obj;
             IResultCallback iResultCallback = getAndRemoveHashMap(tag);
-            iResultCallback.onSuccessResult(object, tag);
-
-
+            if (iResultCallback!=null) {
+                iResultCallback.onSuccessResult(object, tag);
+            }
         }
     };
 
+
+
+    private static void sendFailedMessage(int tag, ErrorBean errorBean) {
+        Message message = Message.obtain();
+        message.arg1 = tag;
+        message.obj = errorBean;
+        handlerFailed.sendMessage(message);
+    }
     private static Handler handlerFailed = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             int tag = msg.arg1;
             ErrorBean errorBean = (ErrorBean) msg.obj;
             IResultCallback iResultCallback = getAndRemoveHashMap(tag);
-            iResultCallback.onFailureResult(errorBean, tag);
+            if (iResultCallback!=null) {
+                iResultCallback.onFailureResult(errorBean, tag);
+            }
         }
     };
+
 
 }

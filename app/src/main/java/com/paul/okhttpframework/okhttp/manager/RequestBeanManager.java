@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class RequestBeanManager {
 
-	private final static String TAG = RequestBeanManager.class.getSimpleName();
+	private final static 				String 							TAG = RequestBeanManager.class.getSimpleName();
 
 	/**
 	 * 根据不同的tag获得不同的请求bean

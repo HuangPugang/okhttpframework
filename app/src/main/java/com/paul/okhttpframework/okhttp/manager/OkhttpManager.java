@@ -25,10 +25,9 @@ import java.util.concurrent.TimeUnit;
  * Created by Paul on 15/12/8.
  */
 public class OkhttpManager {
-
-    private String TAG = OkhttpManager.class.getSimpleName();
-    private volatile static OkhttpManager instance = null;
-    private static OkHttpClient mOkHttpClient;
+    private                         String                          TAG = OkhttpManager.class.getSimpleName();
+    private volatile static         OkhttpManager                   instance = null;
+    private static                  OkHttpClient                    mOkHttpClient;
     private OkhttpManager() {
         mOkHttpClient = new OkHttpClient();
         mOkHttpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
@@ -62,8 +61,8 @@ public class OkhttpManager {
                 case URLConstant.POST:
                     doPost(requestBean.getUrl(), requestBean.getHeaders(),
                             requestBean.getParams(), callback);
-
                     break;
+
             }
         }else {
             netConnectListener.onNetDisconnected();
@@ -120,7 +119,6 @@ public class OkhttpManager {
                     requestBuilder.header(entry.getKey(), entry.getValue());
                 }
             }
-
         }
         Request request = requestBuilder
                 .url(url)
@@ -160,4 +158,6 @@ public class OkhttpManager {
         public void onNetDisconnected();
 
     }
+
+
 }

@@ -6,7 +6,7 @@ import java.util.HashMap;
  * 参数管理类,所有方法都是静态方法，不能获得该类的实例
  */
 public class ParamManager {
-    private static final String TAG = ParamManager.class.getSimpleName();
+    private static final                String                      TAG = ParamManager.class.getSimpleName();
     private ParamManager(){
     }
     //————————————————————————————————————————————这里是分割线————————————————————————————————————————————
