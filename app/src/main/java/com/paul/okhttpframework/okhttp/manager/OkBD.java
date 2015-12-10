@@ -168,7 +168,10 @@ public class OkBD {
     }
 
     private static void sendFailedMessage(int tag, ErrorBean errorBean) {
-
+        Message message = Message.obtain();
+        message.arg1 = tag;
+        message.obj = errorBean;
+        handlerFailed.sendMessage(message);
     }
 
     private static Handler handlerSuccess = new Handler() {
