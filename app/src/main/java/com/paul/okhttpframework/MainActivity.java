@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        for (int i=0;i<100;i++) {
+        for (int i=0;i<6;i++) {
             sendRequest();
         }
 

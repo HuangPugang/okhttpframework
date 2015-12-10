@@ -190,7 +190,6 @@ public class OkBD {
             Object object = handlerBean.getObject();
             IResultCallback iResultCallback = handlerBean.getiResultCallback();
             if (tag!=null) {
-                Log.e(TAG,"mCallbackHashMap.size()"+mCallbackHashMap.size());
                 iResultCallback.onSuccessResult(tag.getTag(), object);
             }
 

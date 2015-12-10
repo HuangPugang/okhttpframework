@@ -91,11 +91,9 @@ public class JsonParseManager {
      */
     public static void jsonParseHealthNewsList(JSONObject jsonObject, TagBean tag, IParseCallback callback) throws JSONException {
         if (callback != null) {
-            JSONArray array = jsonObject.optJSONArray("tngou");
-            Log.e("HPGss",jsonObject.toString());
+
             callback.onSuccess(tag, jsonObject.toString());
-
-
+            
         } else {
             Log.i(TAG, "intjason == null");
         }

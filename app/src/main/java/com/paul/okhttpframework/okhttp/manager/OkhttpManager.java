@@ -1,21 +1,15 @@
 package com.paul.okhttpframework.okhttp.manager;
 
-import android.util.Log;
-
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.framed.Header;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -82,7 +76,7 @@ public class OkhttpManager {
         } else {
             requestUrl = url;
         }
-        Log.e(TAG, requestUrl);
+        L.i(TAG, requestUrl);
         Request.Builder requestBuilder = new Request.Builder();
         if (null!=headers&&headers.size()!=0){
             for (Map.Entry<String,String> entry : params.entrySet()){
@@ -103,7 +97,6 @@ public class OkhttpManager {
     private void doPost(String url, final Map<String, String> headers,
                         final Map<String, String> params,
                         com.squareup.okhttp.Callback callback) throws Exception{
-
         FormEncodingBuilder builder = new FormEncodingBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -112,7 +105,6 @@ public class OkhttpManager {
             }
         }
         RequestBody formBody = builder.build();
-
         Request.Builder requestBuilder = new Request.Builder();
         if (null!=headers&&headers.size()!=0){
             for (Map.Entry<String,String> entry : params.entrySet()){
@@ -122,6 +114,8 @@ public class OkhttpManager {
             }
 
         }
+
+        L.i(TAG, url);
         Request request = requestBuilder
                 .url(url)
                 .post(formBody)
