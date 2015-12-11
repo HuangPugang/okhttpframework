@@ -3,6 +3,7 @@ package com.paul.okhttpframework.okhttp.manager;
 
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 
 import java.util.Map;
 

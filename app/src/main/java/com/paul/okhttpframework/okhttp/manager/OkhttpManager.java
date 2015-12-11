@@ -1,45 +1,39 @@
 package com.paul.okhttpframework.okhttp.manager;
 
-import android.util.Log;
-
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
+import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.internal.framed.Header;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created by Paul on 15/12/8.
+ * okhttp管理类
  */
-public class OkhttpManager {
-    private                         String                          TAG = OkhttpManager.class.getSimpleName();
-    private volatile static         OkhttpManager                   instance = null;
+public class OkHttpManager {
+    private                         String                          TAG = OkHttpManager.class.getSimpleName();
+    private volatile static         OkHttpManager                   instance = null;
     private static                  OkHttpClient                    mOkHttpClient;
-    private OkhttpManager() {
+    private OkHttpManager() {
         mOkHttpClient = new OkHttpClient();
         mOkHttpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         mOkHttpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
         mOkHttpClient.setWriteTimeout(10000, TimeUnit.MILLISECONDS);
     }
 
-    public static OkhttpManager getInstance() {
+    public static OkHttpManager getInstance() {
         if (null == instance) {
-            synchronized (OkhttpManager.class) {
+            synchronized (OkHttpManager.class) {
                 if (null == instance) {
-                    instance = new OkhttpManager();
+                    instance = new OkHttpManager();
                 }
             }
         }
@@ -49,7 +43,7 @@ public class OkhttpManager {
 
 
     public void request(RequestBean requestBean,com.squareup.okhttp.Callback callback,
-                        OkhttpManager.OnNetConnectListener netConnectListener) throws Exception{
+                        OkHttpManager.OnNetConnectListener netConnectListener) throws Exception{
         if (NetUtils.isNetAvailable()) {
             switch (requestBean.getMethod()) {
 
@@ -81,7 +75,7 @@ public class OkhttpManager {
         } else {
             requestUrl = url;
         }
-        Log.e(TAG, requestUrl);
+        L.i(TAG, requestUrl);
         Request.Builder requestBuilder = new Request.Builder();
         if (null!=headers&&headers.size()!=0){
             for (Map.Entry<String,String> entry : params.entrySet()){
@@ -102,7 +96,6 @@ public class OkhttpManager {
     private void doPost(String url, final Map<String, String> headers,
                         final Map<String, String> params,
                         com.squareup.okhttp.Callback callback) throws Exception{
-
         FormEncodingBuilder builder = new FormEncodingBuilder();
 
         for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -111,7 +104,6 @@ public class OkhttpManager {
             }
         }
         RequestBody formBody = builder.build();
-
         Request.Builder requestBuilder = new Request.Builder();
         if (null!=headers&&headers.size()!=0){
             for (Map.Entry<String,String> entry : params.entrySet()){
@@ -120,6 +112,8 @@ public class OkhttpManager {
                 }
             }
         }
+
+        L.i(TAG, url);
         Request request = requestBuilder
                 .url(url)
                 .post(formBody)

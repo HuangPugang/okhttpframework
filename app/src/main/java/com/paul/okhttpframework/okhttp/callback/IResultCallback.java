@@ -1,5 +1,7 @@
 package com.paul.okhttpframework.okhttp.callback;
 
+import com.paul.okhttpframework.okhttp.bean.TagBean;
+
 /**
  * 请求结果
  */
@@ -13,7 +15,7 @@ public interface IResultCallback {
 	 * @throw
 	 * @return void
 	 */
-	public void onSuccessResult(Object object, int tag);
+	public void onSuccessResult(int tag, Object object);
 
-	public void onFailureResult(Object object, int tag);
+	public void onFailureResult(int tag, Object object);
 }

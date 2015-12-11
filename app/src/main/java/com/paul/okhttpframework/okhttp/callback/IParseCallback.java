@@ -2,6 +2,7 @@ package com.paul.okhttpframework.okhttp.callback;
 
 
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
+import com.paul.okhttpframework.okhttp.bean.TagBean;
 
 /**
  * 解析
@@ -9,9 +10,9 @@ import com.paul.okhttpframework.okhttp.bean.ErrorBean;
 public interface IParseCallback {
 
 	// 成功回调
-	public void onSuccess(Object object, int tag);
+	public void onSuccess(TagBean tag, Object object);
 
 	// 失败回调
-	public void onFailure(ErrorBean errorBean, int tag);
+	public void onFailure(TagBean tag, ErrorBean errorBean);
 
 }
