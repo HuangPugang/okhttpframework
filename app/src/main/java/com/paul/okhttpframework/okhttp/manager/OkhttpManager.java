@@ -56,6 +56,9 @@ public class OkHttpManager {
                     doPost(requestBean.getUrl(), requestBean.getHeaders(),
                             requestBean.getParams(), callback);
                     break;
+                case URLConstant.FILE_UPLOAD:
+                    doFileUpload();
+                    break;
 
             }
         }else {
@@ -122,6 +125,9 @@ public class OkHttpManager {
         call.enqueue(callback);
     }
 
+    private void doFileUpload(){
+
+    }
 
     private String urlEncode(Map<String, String> params)
             throws UnsupportedEncodingException {

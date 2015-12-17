@@ -1,18 +1,21 @@
 package com.paul.okhttpframework;
 
 import android.os.AsyncTask;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.paul.okhttpframework.constant.URLConstant;
+import com.paul.okhttpframework.okhttp.bean.ErrorBean;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
 import com.paul.okhttpframework.okhttp.bean.TagBean;
 import com.paul.okhttpframework.okhttp.callback.IResultCallback;
 import com.paul.okhttpframework.okhttp.manager.OkBD;
 import com.paul.okhttpframework.okhttp.manager.ParamManager;
 import com.paul.okhttpframework.okhttp.manager.RequestBeanManager;
+import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.T;
 
 import java.util.HashMap;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements IResultCallback {
 
     @Override
     public void onFailureResult(int tag, Object object) {
-
+        ErrorBean errorBean = (ErrorBean) object;
+        L.e("HPG",errorBean.getMsg());
     }
 }
