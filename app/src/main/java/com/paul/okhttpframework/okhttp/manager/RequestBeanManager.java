@@ -33,7 +33,7 @@ public class RequestBeanManager {
 	public static RequestBean getHealthNewsList(Map<String, String> params) {
 		RequestBean requestBean = new RequestBean();
 		requestBean.setMethod(URLConstant.GET);
-		requestBean.setUrl(URLConstant.URL_GET_HEALTH_LORE_LIST); //
+		requestBean.setUrl("https://kyfw.12306.cn/otn/"); //
 		requestBean.setParams(params);
 		return requestBean;
 	}

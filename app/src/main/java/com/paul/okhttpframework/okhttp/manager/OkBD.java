@@ -2,7 +2,6 @@ package com.paul.okhttpframework.okhttp.manager;
 
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.ErrorBean;
@@ -120,10 +119,10 @@ public class OkBD {
     private static void sendRequest(RequestBean requestBean, final TagBean tag) {
         try {
 
-            OkhttpManager.getInstance().request(requestBean, new Callback() {
+            OkHttpManager.getInstance().request(requestBean, new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
-                    T.showShort(MyApp.getMyAppContext(), "服务器连接异常，请稍后再试");
+//                    T.showShort(MyApp.getMyAppContext(), "服务器连接异常，请稍后再试");
                     ErrorBean errorBean = new ErrorBean();
                     errorBean.setMsg("服务器连接异常，请稍后再试");
                     sendFailedMessage(tag, errorBean);
@@ -150,7 +149,7 @@ public class OkBD {
                         e.printStackTrace();
                     }
                 }
-            }, new OkhttpManager.OnNetConnectListener() {
+            }, new OkHttpManager.OnNetConnectListener() {
                 @Override
                 public void onNetDisconnected() {
                     L.i(TAG, "onNetDisconnected");

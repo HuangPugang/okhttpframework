@@ -14,8 +14,8 @@ public class ParamManager {
 
     public static HashMap<String,String> getXxxParam(String pager,String rows){
         HashMap<String,String> params = new HashMap<String,String>();
-        params.put("pager",pager);
-        params.put("rows",rows);
+//        params.put("pager",pager);
+//        params.put("rows",rows);
         return params;
     }
 

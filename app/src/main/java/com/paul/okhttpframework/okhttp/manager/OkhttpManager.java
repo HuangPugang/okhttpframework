@@ -1,15 +1,24 @@
 package com.paul.okhttpframework.okhttp.manager;
 
+import android.util.Log;
+
 import com.paul.okhttpframework.constant.URLConstant;
 import com.paul.okhttpframework.okhttp.bean.RequestBean;
 import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.NetUtils;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.MultipartBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -18,23 +27,23 @@ import java.util.concurrent.TimeUnit;
 /**
  * okhttp管理类
  */
-public class OkhttpManager {
+public class OkHttpManager {
 
-    private String TAG = OkhttpManager.class.getSimpleName();
-    private volatile static OkhttpManager instance = null;
+    private String TAG = OkHttpManager.class.getSimpleName();
+    private volatile static OkHttpManager instance = null;
     private static OkHttpClient mOkHttpClient;
-    private OkhttpManager() {
+    private OkHttpManager() {
         mOkHttpClient = new OkHttpClient();
         mOkHttpClient.setConnectTimeout(10000, TimeUnit.MILLISECONDS);
         mOkHttpClient.setReadTimeout(10000, TimeUnit.MILLISECONDS);
         mOkHttpClient.setWriteTimeout(10000, TimeUnit.MILLISECONDS);
     }
 
-    public static OkhttpManager getInstance() {
+    public static OkHttpManager getInstance() {
         if (null == instance) {
-            synchronized (OkhttpManager.class) {
+            synchronized (OkHttpManager.class) {
                 if (null == instance) {
-                    instance = new OkhttpManager();
+                    instance = new OkHttpManager();
                 }
             }
         }
@@ -44,7 +53,7 @@ public class OkhttpManager {
 
 
     public void request(RequestBean requestBean,com.squareup.okhttp.Callback callback,
-                        OkhttpManager.OnNetConnectListener netConnectListener) throws Exception{
+                        OkHttpManager.OnNetConnectListener netConnectListener) throws Exception{
         if (NetUtils.isNetAvailable()) {
             switch (requestBean.getMethod()) {
 
@@ -124,6 +133,46 @@ public class OkhttpManager {
         call.enqueue(callback);
     }
 
+    private void doUpload(String url, final Map<String, String> headers,
+                          final Map<String, String> params,File file,
+                          com.squareup.okhttp.Callback callback){
+        MultipartBuilder builder = new MultipartBuilder()
+                .type(MultipartBuilder.FORM);
+
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (entry.getKey() != null && entry.getValue() != null) {
+                builder.addPart(Headers.of("Content-Disposition", "form-data; name=\"" + entry.getKey() + "\""),
+                        RequestBody.create(null, entry.getValue()));
+            }
+        }
+
+        RequestBody fileBody = null;
+        String fileName = file.getName();
+        fileBody = RequestBody.create(MediaType.parse("application/octet-stream"), file);
+        //TODO 根据文件名设置contentType
+
+        builder.addPart(Headers.of("Content-Disposition",
+                        "form-data; name=\"" + "file" + "\"; filename=\"" + fileName + "\""),
+                fileBody);
+        RequestBody requestBody = builder.build();
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+        Call call = mOkHttpClient.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Log.e("HPG", response.body().string());
+            }
+        });
+    }
 
     private String urlEncode(Map<String, String> params)
             throws UnsupportedEncodingException {
