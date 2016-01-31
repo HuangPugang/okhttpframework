@@ -1,13 +1,13 @@
 # okhttpframework
 network frame base on okhttp,
-首先，非常感谢小纹同学，结合了他的做法，对okhttp进行了封装
+首先，非常感谢小纹同学，在他的帮助下，对okhttp进行了封装
 
 #HOW TO USE
 #示例
     private void sendRequest(){
         HashMap<String,String> params = ParamManager.getXxxParam("1","5");
-        RequestBean requestBean = RequestBeanManager.getRequestBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST,params);
-        OkBD.businessDispatch(URLConstant.TAG_GET_HEALTH_NEWS_LIST,requestBean,this);
+        RequestBean requestParam = RequestBeanManager.getRequestBean(URLConstant.TAG_GET_HEALTH_NEWS_LIST,params);
+        OkBD.businessDispatch(URLConstant.TAG_GET_HEALTH_NEWS_LIST,requestParam,this);
 
 
 #步骤
@@ -31,12 +31,12 @@ network frame base on okhttp,
 	}
 
 	public static RequestBean getHealthNewsList(Map<String, String> params) {
-		RequestBean requestBean = new RequestBean();
-		requestBean.setMethod(URLConstant.GET);
-		requestBean.setUrl(URLConstant.URL_GET_HEALTH_LORE_LIST); //
-		requestBean.setParams(params);
-		return requestBean;
+		RequestBean requestParam = new RequestBean();
+		requestParam.setMethod(URLConstant.GET);
+		requestParam.setUrl(URLConstant.URL_GET_HEALTH_LORE_LIST); //
+		requestParam.setParams(params);
+		return requestParam;
 	}
 
-#3.调用OkBD中的businessDispatch(int tag, RequestBean requestBean, IResultCallback iResultCallback)方法派发网络请求
+#3.调用OkBD中的businessDispatch(int tag, RequestBean requestParam, IResultCallback iResultCallback)方法派发网络请求
 

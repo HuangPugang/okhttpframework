@@ -13,6 +13,7 @@ public class MyApp extends Application {
     public void onCreate() {
         super.onCreate();
         init();
+        String s = "test";
     }
 
     private void init(){

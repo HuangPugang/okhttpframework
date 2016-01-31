@@ -1,86 +1,100 @@
-/*
-    Android Asynchronous Http Client
-    Copyright (c) 2011 James Smith <james@loopj.com>
-    http://loopj.com
-
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
-*/
-
 package com.paul.okhttpframework.okhttp.bean;
 
+import com.paul.okhttpframework.okhttp.API;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class RequestParams {
-    private static String ENCODING = "UTF-8";
+    private int method;
+    private String url;
+    protected Map<String, String> params;
+    protected Map<String, File> files;
+    protected Map<String, String> headers;
 
-    protected ConcurrentHashMap<String, String> urlParams;
-    protected ConcurrentHashMap<String, File> fileParams;
-
-
-    public RequestParams() {
-        urlParams = new ConcurrentHashMap<String, String>();
-        fileParams = new ConcurrentHashMap<String, File>();
+    public RequestParams(int method, String url) {
+       this(method, url, false);
     }
 
+    /**
+     * @param method
+     * @param url
+     * @param withBaseURL 是否使用baseURL
+     */
+    public RequestParams(int method, String url,boolean withBaseURL) {
+        init(method,url,withBaseURL);
+    }
+
+    private void init(int method, String url,boolean withBaseURL){
+        this.method = method;
+        if (withBaseURL) {
+            this.url = API.SERVER_URL + url;
+        }else{
+            this.url = url;
+        }
+        this.params = new HashMap<>();
+        this.files = new HashMap<>();
+        this.headers = new HashMap<>();
+    }
+
+    public int getMethod() {
+        return method;
+    }
+
+    public void setMethod(int method) {
+        this.method = method;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
     public void put(String key, String value) {
         if (key != null && value != null) {
-            urlParams.put(key, value);
+            params.put(key, value);
         }
     }
 
-
-    public void put(String key, File file) throws FileNotFoundException {
-        put(key, file);
-    }
-
-
-    public void remove(String key) {
-        urlParams.remove(key);
-        fileParams.remove(key);
-    }
-
-    public ConcurrentHashMap<String, String> getUrlParams() {
-        return urlParams;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
-            if (result.length() > 0)
-                result.append("&");
-
-            result.append(entry.getKey());
-            result.append("=");
-            result.append(entry.getValue());
+    public void putFile(String key, File file) {
+        if (key != null && file != null) {
+            files.put(key, file);
         }
-
-        for (ConcurrentHashMap.Entry<String, File> entry : fileParams.entrySet()) {
-            if (result.length() > 0)
-                result.append("&");
-
-            result.append(entry.getKey());
-            result.append("=");
-            result.append("FILE");
-        }
-
-
-        return result.toString();
     }
 
+    public void putHeader(String key, String value) {
+        if (key != null && value != null) {
+            headers.put(key, value);
+        }
+    }
+
+    public void setParams(Map<String, String> params) {
+        this.params = params;
+    }
+
+    public void setFiles(Map<String, File> files) {
+        this.files = files;
+    }
+
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    public Map<String, String> getParams() {
+        return params;
+    }
+
+    public Map<String, File> getFiles() {
+        return files;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
 }
