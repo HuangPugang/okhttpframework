@@ -1,6 +1,7 @@
 package com.paul.okhttpframework.okhttp.manager;
 
 
+import com.paul.okhttpframework.okhttp.API;
 import com.paul.okhttpframework.okhttp.bean.RequestParams;
 
 import java.io.File;
@@ -17,11 +18,10 @@ public class OkParamManager {
 
     //————————————————————————————————————————————这里是分割线————————————————————————————————————————————
 
-    public static RequestParams getNewsListParam(int method,String url ,String name,File file){
+    public static RequestParams getNewsListParam(int method,String url ,int id,int rows){
         RequestParams params = new RequestParams(method,url);
-        params.put("name",name);
-        params.putFile("file",file);
-
+        params.put("id",id+"");
+        params.put("rows", rows+"");
 
         return params;
     }

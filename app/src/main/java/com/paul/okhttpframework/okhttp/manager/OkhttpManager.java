@@ -181,6 +181,8 @@ public class OkHttpManager {
                 }
             }
         }
+
+
         if (files != null && !files.isEmpty() && files.size() != 0) {
             for (Map.Entry<String, File> entry : files.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
@@ -192,11 +194,19 @@ public class OkHttpManager {
                 }
             }
         }
+        RequestBody requestBody = builder.build();
 
+        Request.Builder requestBuilder = new Request.Builder();
+        if (null != headers && !headers.isEmpty() && headers.size() != 0) {
+            for (Map.Entry<String, String> entry : params.entrySet()) {
+                if (entry.getKey() != null && entry.getValue() != null) {
+                    requestBuilder.header(entry.getKey(), entry.getValue());
+                }
+            }
+        }
         Log.i(TAG, "tag=" + tag + " UPLOAD:" + url);
         Log.i(TAG, "tag=" + tag + " params= " + params.toString());
-        RequestBody requestBody = builder.build();
-        Request request = new Request.Builder()
+        Request request = requestBuilder
                 .url(url)
                 .post(requestBody)
                 .build();

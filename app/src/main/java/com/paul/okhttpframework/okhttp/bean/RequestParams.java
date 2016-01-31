@@ -15,7 +15,7 @@ public class RequestParams {
     protected Map<String, String> headers;
 
     public RequestParams(int method, String url) {
-       this(method, url, false);
+       this(method, url, true);
     }
 
     /**
