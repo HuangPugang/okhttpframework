@@ -1,6 +1,9 @@
 package com.paul.okhttpframework.okhttp.manager;
 
 
+import android.nfc.Tag;
+
+import com.paul.okhttpframework.okhttp.bean.OkTag;
 import com.paul.okhttpframework.okhttp.bean.RequestParams;
 import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
 
@@ -34,7 +37,8 @@ public class OkClient {
      * @param iResponseCallback 回调接口，每一个回调接口与tag绑定
      */
     public void dispatchRequest(int tag, RequestParams params, Class<?> cls, IResponseCallback iResponseCallback) {
-        mOkHttpManager.request(tag, params, cls, iResponseCallback);
+        OkTag okTag = new OkTag(tag);
+        mOkHttpManager.request(okTag, params, cls, iResponseCallback);
     }
 
 

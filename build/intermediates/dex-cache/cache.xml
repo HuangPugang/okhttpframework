@@ -1,2 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" />
+<items version="2" >
+
+    <item
+        jar="/Users/paul/Documents/dev/tools/android-sdk/android-sdk-macosx/extras/android/m2repository/com/android/support/support-annotations/23.1.1/support-annotations-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="8d680ba5a623724d1fb0e81c36a790f023a6cede">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/support-annotations-23.1.1_7a16767908929d2a154aec8452dac6ac1ce066ba.jar" />
+    </item>
+    <item
+        jar="/Users/paul/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.0.1/b34c1f2d993044656e87f88970b6818e99e886ba/okhttp-3.0.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="b34c1f2d993044656e87f88970b6818e99e886ba">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/okhttp-3.0.1_a30c8918fdd8a88ff074a4ff2551b3bb5d27cf8a.jar" />
+    </item>
+    <item
+        jar="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/libs/internal_impl-23.1.1.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="a4de9c81ae239414e1ed0f86441b02abaf29bca9">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/internal_impl-23.1.1_3f0373d31c44ebb98b6dd09188490e8deb230ae4.jar" />
+    </item>
+    <item
+        jar="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/libs/gson-2.2.4.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="973e832af433b44c3ed11c426f2f390b29f3f3f8">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/gson-2.2.4_1562b729731c8d31319d7173434bd39f346d01d6.jar" />
+    </item>
+    <item
+        jar="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/exploded-aar/com.android.support/support-v4/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="6cbc7773921fcfedbe55657578f0cbfe614778dc">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/com.android.support-support-v4-23.1.1_0ad59a5ecf4e11628c75330e35bc6e02aa8b5c9b.jar" />
+    </item>
+    <item
+        jar="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/23.1.1/jars/classes.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="5c5699834e9722f1c288fea2de82725d078ba127">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/com.android.support-appcompat-v7-23.1.1_ebc3f91f02e803776142e2544a70c1233df4d691.jar" />
+    </item>
+    <item
+        jar="/Users/paul/.gradle/caches/modules-2/files-2.1/com.squareup.okio/okio/1.6.0/98476622f10715998eacf9240d6b479f12c66143/okio-1.6.0.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="98476622f10715998eacf9240d6b479f12c66143">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/okio-1.6.0_f84ad56258efd8c2457cbd98bf236b1cb9f5e616.jar" />
+    </item>
+    <item
+        jar="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/libs/volley.jar"
+        jumboMode="false"
+        revision="23.0.2"
+        sha1="4a94601db9bdfb7dc60efabb3dea91a0675f591d">
+        <dex dex="/Users/paul/Documents/dev/workspace/studio/okhttpframework/app/build/intermediates/pre-dexed/debug/volley_a2d5b451e4c9f0fcfc5c751e0ea1ac88b0d3e09c.jar" />
+    </item>
+
+</items>

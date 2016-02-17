@@ -14,12 +14,13 @@ import com.paul.okhttpframework.okhttp.manager.OkParamManager;
  * how to use
  */
 public class MainActivity extends AppCompatActivity {
-
+    OkClient mOkClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mOkClient = OkClient.getInstance();
         setContentView(R.layout.activity_main);
-        OkClient.getInstance().dispatchRequest(API.TAG_NEWS_LIST, OkParamManager.getNewsListParam(API.GET,API.API_NEWS_LIST,1,8), RequestResult.class, new IResponseCallback() {
+        mOkClient.dispatchRequest(API.TAG_NEWS_LIST, OkParamManager.getNewsListParam(API.GET,API.API_NEWS_LIST,1,8), RequestResult.class, new IResponseCallback() {
             @Override
             public void onSuccess(int tag, Object object) {
                 RequestResult requestResult = (RequestResult) object;
