@@ -16,10 +16,11 @@ import com.paul.okhttpframework.util.NetUtils;
  * how to use
  */
 public class MainActivity extends AppCompatActivity {
-
+    OkClient mOkClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mOkClient = OkClient.getInstance();
         setContentView(R.layout.activity_main);
         NetUtils.isNetworkAvailable(MyApp.getMyAppContext());
         OkClient.getInstance().dispatchRequest(API.TAG_NEWS_LIST, OkParamManager.getNewsListParam(1,8), RequestResult.class, new IResponseCallback() {

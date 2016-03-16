@@ -7,23 +7,23 @@ import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
  * Created by Paul on 15/12/10.
  */
 public class OkResult {
-    private int tag;
+    private OkTag tag;
     private Object object;
     private IResponseCallback iResponseCallback;
     public OkResult() {
     }
 
-    public OkResult(int tag, Object object, IResponseCallback iResponseCallback) {
+    public OkResult(OkTag tag, Object object, IResponseCallback iResponseCallback) {
         this.tag = tag;
         this.object = object;
         this.iResponseCallback = iResponseCallback;
     }
 
-    public int getTag() {
+    public OkTag getTag() {
         return tag;
     }
 
-    public void setTag(int tag) {
+    public void setTag(OkTag tag) {
         this.tag = tag;
     }
 
