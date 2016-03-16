@@ -3,15 +3,15 @@ package com.paul.okhttpframework.okhttp.manager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
-
 
 import com.google.gson.Gson;
+import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.API;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.bean.OkResult;
 import com.paul.okhttpframework.okhttp.bean.RequestParams;
 import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
+import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.NetUtils;
 
 import java.io.File;
@@ -116,10 +116,10 @@ public class OkHttpManager {
         } else {
             requestUrl = url;
         }
-        Log.i(TAG, "tag=" + tag + " GET:" + requestUrl);
+        L.i(TAG, "tag=" + tag + " GET:" + requestUrl);
         Request.Builder requestBuilder = new Request.Builder();
         if (null != headers && !headers.isEmpty() && headers.size() != 0) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
                     requestBuilder.header(entry.getKey(), entry.getValue());
                 }
@@ -153,14 +153,14 @@ public class OkHttpManager {
         //build request header
         Request.Builder requestBuilder = new Request.Builder();
         if (null != headers && !headers.isEmpty() && headers.size() != 0) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
                     requestBuilder.header(entry.getKey(), entry.getValue());
                 }
             }
         }
-        Log.i(TAG, "tag=" + tag + " POST:" + url);
-        Log.i(TAG, "tag=" + tag + " params= " + params.toString());
+        L.i(TAG, "tag=" + tag + " POST:" + url);
+        L.i(TAG, "tag=" + tag + " params= " + params.toString());
         Request request = requestBuilder
                 .url(url)
                 .post(formBody)
@@ -198,14 +198,14 @@ public class OkHttpManager {
 
         Request.Builder requestBuilder = new Request.Builder();
         if (null != headers && !headers.isEmpty() && headers.size() != 0) {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
                     requestBuilder.header(entry.getKey(), entry.getValue());
                 }
             }
         }
-        Log.i(TAG, "tag=" + tag + " UPLOAD:" + url);
-        Log.i(TAG, "tag=" + tag + " params= " + params.toString());
+        L.i(TAG, "tag=" + tag + " UPLOAD:" + url);
+        L.i(TAG, "tag=" + tag + " params= " + params.toString());
         Request request = requestBuilder
                 .url(url)
                 .post(requestBody)
@@ -230,7 +230,7 @@ public class OkHttpManager {
             public void onResponse(Call call, Response response) throws IOException {
                 try {
                     String strResult = response.body().string();
-                    Log.i(TAG, "tag=" + tag + " result=" + strResult);
+                    L.i(TAG, "tag=" + tag + " result=" + strResult);
                     Object result ;
                     if (cls != null) {
                         Gson gson = getGson();
@@ -301,7 +301,7 @@ public class OkHttpManager {
     private IResponseCallback getAndRemoveCallback(int tag) {
         if (mCallbacks != null && mCallbacks.size() != 0 && mCallbacks.containsKey(tag)) {
             IResponseCallback iResponseCallback = mCallbacks.get(tag);
-            Log.i(TAG, "Before_removeTag_HashMap.size===" + mCallbacks.size());
+            L.i(TAG, "Before_removeTag_HashMap.size===" + mCallbacks.size());
             mCallbacks.remove(tag);
             return iResponseCallback;
         }
@@ -416,7 +416,6 @@ public class OkHttpManager {
 
 
     public void cancelAllRequest() {
-
         mAsyncCalls.clear();
         mCallbacks.clear();
     }
@@ -430,6 +429,10 @@ public class OkHttpManager {
         }
     }
 
+
+
+
+
     private static class InternalHandler extends Handler {
         public InternalHandler() {
             super(Looper.getMainLooper());
@@ -440,7 +443,7 @@ public class OkHttpManager {
             //run on main thread
             OkResult okResult = (OkResult) msg.obj;
             int tag = okResult.getTag();
-            IResponseCallback iResponseCallback = okResult.getiResponseCallback();
+            IResponseCallback iResponseCallback = okResult.getResponseCallback();
             switch (msg.arg1) {
                 case CODE_SUCCESS:
                     Object object = okResult.getObject();
@@ -450,7 +453,6 @@ public class OkHttpManager {
                     OkError okError = (OkError) okResult.getObject();
                     iResponseCallback.onError(tag, okError);
                     break;
-
             }
         }
     }

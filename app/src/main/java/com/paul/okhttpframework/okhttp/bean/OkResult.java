@@ -35,11 +35,11 @@ public class OkResult {
         this.object = object;
     }
 
-    public IResponseCallback getiResponseCallback() {
+    public IResponseCallback getResponseCallback() {
         return iResponseCallback;
     }
 
-    public void setiResponseCallback(IResponseCallback iResponseCallback) {
+    public void setResponseCallback(IResponseCallback iResponseCallback) {
         this.iResponseCallback = iResponseCallback;
     }
 }

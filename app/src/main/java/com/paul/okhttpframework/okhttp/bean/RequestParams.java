@@ -8,14 +8,19 @@ import java.util.Map;
 
 
 public class RequestParams {
+    private int tag ;
     private int method;
     private String url;
     protected Map<String, String> params;
     protected Map<String, File> files;
     protected Map<String, String> headers;
 
-    public RequestParams(int method, String url) {
-       this(method, url, true);
+
+    public RequestParams(int tag,String url){
+        this(API.GET,tag,url);
+    }
+    public RequestParams(int method, int tag,String url) {
+       this(method, tag, url, true);
     }
 
     /**
@@ -23,12 +28,13 @@ public class RequestParams {
      * @param url
      * @param withBaseURL 是否使用baseURL
      */
-    public RequestParams(int method, String url,boolean withBaseURL) {
-        init(method,url,withBaseURL);
+    public RequestParams(int method, int tag,String url,boolean withBaseURL) {
+        init(method,tag,url,withBaseURL);
     }
 
-    private void init(int method, String url,boolean withBaseURL){
+    private void init(int method, int tag,String url,boolean withBaseURL){
         this.method = method;
+        this.tag = tag;
         if (withBaseURL) {
             this.url = API.SERVER_URL + url;
         }else{
@@ -71,6 +77,14 @@ public class RequestParams {
         if (key != null && value != null) {
             headers.put(key, value);
         }
+    }
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
     }
 
     public void setParams(Map<String, String> params) {

@@ -18,11 +18,10 @@ public class OkParamManager {
 
     //————————————————————————————————————————————这里是分割线————————————————————————————————————————————
 
-    public static RequestParams getNewsListParam(int method,String url ,int id,int rows){
-        RequestParams params = new RequestParams(method,url);
+    public static RequestParams getNewsListParam(int id,int rows){
+        RequestParams params = new RequestParams(API.TAG_NEWS_LIST,API.API_NEWS_LIST);
         params.put("id",id+"");
         params.put("rows", rows+"");
-
         return params;
     }
 
