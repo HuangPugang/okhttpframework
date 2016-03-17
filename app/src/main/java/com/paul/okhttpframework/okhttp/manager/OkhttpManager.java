@@ -55,6 +55,7 @@ public class OkHttpManager {
                 .connectTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
                 .readTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
                 .writeTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+
                 .build();
     }
 
