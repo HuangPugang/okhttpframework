@@ -104,6 +104,41 @@ public class NetUtils {
 		builder.create();
 		builder.show();
 	}
+	/**
+	 * 是否为WiFi
+	 * @return
+	 */
+	public static boolean isWifi(final DialogFactory.OnDialogClickListener listener){
+		ConnectivityManager manager = (ConnectivityManager) MyApp.getMyAppContext()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+		State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+				.getState();
+		State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+				.getState();
+		if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
+
+		}
+		// 判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
+		if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
+			return true;
+		}else {
+			DialogFactory.showAlertDialog(MyApp.getMyAppContext(), "温馨提示:", "当前为2G/3G/4G网络,是否继续操作?", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					listener.confirm();
+				}
+			}, new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					listener.cancel();
+				}
+			});
+			return false;
+		}
+	}
 
 	public static boolean isNetAvailable() {
 

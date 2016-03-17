@@ -14,9 +14,11 @@ import android.widget.Toast;
 public class MyApp extends Application {
 
     private static Context mAppContext;
+    private static MyApp myApp;
     @Override
     public void onCreate() {
         super.onCreate();
+        myApp = this;
         init();
         String s = "test";
         registerReceiver(mHomeKeyEventReceiver,new IntentFilter(
@@ -29,6 +31,10 @@ public class MyApp extends Application {
 
     public static Context getMyAppContext(){
         return mAppContext;
+    }
+
+    public static MyApp getApp(){
+        return myApp;
     }
 
 

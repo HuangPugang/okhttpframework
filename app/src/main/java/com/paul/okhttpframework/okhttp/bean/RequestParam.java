@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class RequestParams {
+public class RequestParam {
     private int tag ;
     private int method;
     private String url;
@@ -16,10 +16,10 @@ public class RequestParams {
     protected Map<String, String> headers;
 
 
-    public RequestParams(int tag,String url){
-        this(API.GET,tag,url);
+    public RequestParam(int tag, String url){
+        this(API.GET, tag, url);
     }
-    public RequestParams(int method, int tag,String url) {
+    public RequestParam(int method, int tag, String url) {
        this(method, tag, url, true);
     }
 
@@ -28,7 +28,7 @@ public class RequestParams {
      * @param url
      * @param withBaseURL 是否使用baseURL
      */
-    public RequestParams(int method, int tag,String url,boolean withBaseURL) {
+    public RequestParam(int method, int tag, String url, boolean withBaseURL) {
         init(method,tag,url,withBaseURL);
     }
 
@@ -61,9 +61,13 @@ public class RequestParams {
         this.url = url;
     }
 
-    public void put(String key, String value) {
+    public void put(String key, Object value) {
         if (key != null && value != null) {
-            params.put(key, value);
+            if (value instanceof File){
+                putFile(key,(File)value);
+            }else {
+                params.put(key, value+"");
+            }
         }
     }
 

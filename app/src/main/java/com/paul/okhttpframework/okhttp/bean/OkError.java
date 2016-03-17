@@ -9,11 +9,14 @@ public class OkError {
 
 	public OkError() {
 	}
-
+	public OkError(String msg){
+		this.msg = msg;
+	}
 	public OkError(int status, String msg) {
 		this.status = status;
 		this.msg = msg;
 	}
+
 
 	public int getStatus() {
 		return status;

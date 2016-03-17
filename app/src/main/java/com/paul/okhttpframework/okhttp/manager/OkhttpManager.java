@@ -3,19 +3,28 @@ package com.paul.okhttpframework.okhttp.manager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import com.google.gson.Gson;
-import com.paul.okhttpframework.okhttp.API;
+import com.google.gson.GsonBuilder;
+import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.bean.OkResult;
 import com.paul.okhttpframework.okhttp.bean.OkTag;
-import com.paul.okhttpframework.okhttp.bean.RequestParams;
+import com.paul.okhttpframework.okhttp.bean.RequestParam;
 import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
+import com.paul.okhttpframework.okhttp.progress.ProgressListener;
+import com.paul.okhttpframework.okhttp.progress.ProgressRequestBody;
+import com.paul.okhttpframework.util.AppConfig;
+import com.paul.okhttpframework.util.DialogFactory;
 import com.paul.okhttpframework.util.L;
 import com.paul.okhttpframework.util.NetUtils;
+import com.paul.okhttpframework.util.T;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -36,70 +45,119 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * OkHttp管理类
+ * 网络管理页面
  */
 public class OkHttpManager {
-    private String TAG = OkHttpManager.class.getSimpleName();
+    public static final int GET = 100;
+    public static final int POST = 101;
+    public static final int PUT = 102;
+    public static final int DELETE = 103;
+    public static final int DOWNLOAD = 104;
+    public static final int UPLOAD = 105;
+
+    private static final String TAG = OkHttpManager.class.getSimpleName();
     private static final int DEFAULT_TIME_OUT = 15000;
     private static final int CODE_SUCCESS = 0;
     private static final int CODE_FAILED = 1;
+    private static final int CODE_TOKEN_ERROR = 2;
 
+    private static OkHttpManager sInstance;
+    //handler the result of request
     private OkHttpClient mOkHttpClient;
-    private InternalHandler mInternalHandler;
-    private ConcurrentHashMap<OkTag, IResponseCallback> mCallbacks = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<OkTag, Call> mAsyncCalls = new ConcurrentHashMap<>();
+    private InternalHandler mHandler;
     private Gson mGson;
+    //request callbacks
+    private ConcurrentHashMap<OkTag, IResponseCallback> mCallbacks = new ConcurrentHashMap<>();
+    //request calls
+    private ConcurrentHashMap<OkTag, Call> mAsyncCalls = new ConcurrentHashMap<>();
 
-    public OkHttpManager() {
-        mOkHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
-                .readTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
-                .writeTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
-
-                .build();
+    private OkHttpManager() {
+        if (mOkHttpClient == null) {
+            synchronized (OkHttpManager.class) {
+                mOkHttpClient = new OkHttpClient.Builder()
+                        .connectTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+                        .writeTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+                        .readTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+                        .build();
+            }
+        }
     }
 
+    public static OkHttpManager getInstance() {
+        if (null == sInstance) {
+            synchronized (OkHttpManager.class) {
+                sInstance = new OkHttpManager();
+            }
+        }
+        return sInstance;
+    }
 
     /**
      * @param tag
-     * @param params
+     * @param requestParam
      * @param cls
      * @param callback
      */
-    public void request(OkTag tag, RequestParams params, Class<?> cls, IResponseCallback callback) {
-        //添加到回调map里
+    public void request(final OkTag tag, final RequestParam requestParam, final Class<?> cls, final IResponseCallback callback, final ProgressListener progressListener) {
         addCallback(tag, callback);
-        if (params == null) {
-            sendFailedMessage(tag, getOkError("参数错误", 300));
+        if (requestParam == null) {
+            //almost tell the developer that he/she forget the RequestBean
+            sendFailedMessage(tag, getOkError("参数错误"));
             return;
         }
         if (NetUtils.isNetAvailable()) {
             try {
-                switch (params.getMethod()) {
-                    case API.GET:
-                        doGet(tag, params.getUrl(), params.getHeaders(),
-                                params.getParams(), cls);
+                switch (requestParam.getMethod()) {
+                    case GET:
+                        doGet(tag, requestParam.getUrl(), requestParam.getHeaders(),
+                                requestParam.getParams(), cls);
                         break;
-                    case API.POST:
-                        doPost(tag, params.getUrl(), params.getHeaders(),
-                                params.getParams(), cls);
+                    case POST:
+                        doPost(tag, requestParam.getUrl(), requestParam.getHeaders(),
+                                requestParam.getParams(), cls);
                         break;
-                    case API.UPLOAD:
-                        doUpload(tag, params.getUrl(), params.getHeaders(),
-                                params.getParams(), params.getFiles(), cls);
-                        break;
+                    case DOWNLOAD:
+                        NetUtils.isWifi(new DialogFactory.OnDialogClickListener() {
+                            @Override
+                            public void confirm() {
+                                doDownload(tag, requestParam.getUrl(), callback, progressListener);
+                            }
 
+                            @Override
+                            public void cancel() {
+                                sendFailedMessage(tag, getOkError("已取消操作"));
+                            }
+                        });
+                        break;
+                    case UPLOAD:
+                        NetUtils.isWifi(new DialogFactory.OnDialogClickListener() {
+                            @Override
+                            public void confirm() {
+                                doUpload(tag, requestParam.getUrl(), requestParam.getParams(),
+                                        requestParam.getFiles(), cls, callback, progressListener);
+                            }
+
+                            @Override
+                            public void cancel() {
+                                sendFailedMessage(tag, getOkError("已取消操作"));
+                            }
+                        });
+
+                        break;
                 }
             } catch (Exception e) {
-                sendFailedMessage(tag, getOkError("请求失败", 0));
+                //unexpected error
+                sendFailedMessage(tag, new OkError("请求失败"));
             }
         } else {
-            sendFailedMessage(tag, getOkError("当前网络已断开,请检查网络后重试", 0));
+            sendFailedMessage(tag, new OkError("当前网络已断开,请检查网络后重试"));
         }
     }
 
 
     /**
+     * get request
+     *
      * @param tag
      * @param url
      * @param headers
@@ -109,7 +167,7 @@ public class OkHttpManager {
      */
     private void doGet(final OkTag tag, String url, final Map<String, String> headers,
                        final Map<String, String> params, final Class<?> cls) throws Exception {
-        String requestUrl;
+        String requestUrl = null;
         // 如果是GET请求，则请求参数在URL中
         if (params != null && !params.isEmpty() && params.size() != 0) {
             String param = urlEncode(params);
@@ -117,7 +175,7 @@ public class OkHttpManager {
         } else {
             requestUrl = url;
         }
-        L.i(TAG, "tag=" + tag + " GET:" + requestUrl);
+        L.i(TAG, "tag=" + tag.getTag() + " GET:" + requestUrl);
         Request.Builder requestBuilder = new Request.Builder();
         if (null != headers && !headers.isEmpty() && headers.size() != 0) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -133,6 +191,8 @@ public class OkHttpManager {
     }
 
     /**
+     * post request
+     *
      * @param tag
      * @param url
      * @param headers
@@ -141,7 +201,6 @@ public class OkHttpManager {
      */
     private void doPost(final OkTag tag, String url, final Map<String, String> headers,
                         final Map<String, String> params, final Class<?> cls) {
-
         FormBody.Builder builder = new FormBody.Builder();
         if (params != null && !params.isEmpty() && params.size() != 0) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -160,8 +219,8 @@ public class OkHttpManager {
                 }
             }
         }
-        L.i(TAG, "tag=" + tag + " POST:" + url);
-        L.i(TAG, "tag=" + tag + " params= " + params.toString());
+        L.i(TAG, "tag=" + tag.getTag() + " POST:" + url);
+        L.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
         Request request = requestBuilder
                 .url(url)
                 .post(formBody)
@@ -170,10 +229,10 @@ public class OkHttpManager {
     }
 
     //fileupload
-    public void doUpload(final OkTag tag, String url, final Map<String, String> headers, final Map<String, String> params,
-                         final Map<String, File> files, final Class<?> cls) {
+    private void doUpload(final OkTag tag, String url, Map<String, String> params, Map<String, File> files, final Class<?> cls, IResponseCallback callback, ProgressListener progressListener) {
+        L.i(TAG, url);
+        L.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
         MultipartBody.Builder builder = new MultipartBody.Builder();
-
         if (params != null && !params.isEmpty() && params.size() != 0) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
@@ -182,8 +241,6 @@ public class OkHttpManager {
                 }
             }
         }
-
-
         if (files != null && !files.isEmpty() && files.size() != 0) {
             for (Map.Entry<String, File> entry : files.entrySet()) {
                 if (entry.getKey() != null && entry.getValue() != null) {
@@ -195,67 +252,162 @@ public class OkHttpManager {
                 }
             }
         }
+
         RequestBody requestBody = builder.build();
+        Request request;
 
-        Request.Builder requestBuilder = new Request.Builder();
-        if (null != headers && !headers.isEmpty() && headers.size() != 0) {
-            for (Map.Entry<String, String> entry : headers.entrySet()) {
-                if (entry.getKey() != null && entry.getValue() != null) {
-                    requestBuilder.header(entry.getKey(), entry.getValue());
-                }
-            }
+        if (progressListener != null) {//带进度条
+            request = new Request.Builder()
+                    .url(url)
+                    .post(new ProgressRequestBody(requestBody, progressListener))
+                    .build();
+        } else {
+            request = new Request.Builder()
+                    .url(url)
+                    .post(requestBody)
+                    .build();
         }
-        L.i(TAG, "tag=" + tag + " UPLOAD:" + url);
-        L.i(TAG, "tag=" + tag + " params= " + params.toString());
-        Request request = requestBuilder
-                .url(url)
-                .post(requestBody)
-                .build();
-
         deliveryRequest(tag, request, cls);
     }
 
-    private void deliveryRequest(final OkTag tag, final Request request, final Class<?> cls) {
-
+    /**
+     * 下载
+     *
+     * @param tag
+     * @param callback
+     * @param progressListener
+     */
+    private void doDownload(final OkTag tag, final String url, final IResponseCallback callback, final ProgressListener progressListener) {
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+//        OkHttpClient client = new OkHttpClient.Builder()
+//                .connectTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+//                .writeTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+//                .readTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
+//                .addInterceptor(new Interceptor() {
+//                    @Override
+//                    public Response intercept(Chain chain) throws IOException {
+//                        //拦截
+//                        Response originalResponse = chain.proceed(chain.request());
+//                        //包装响应体并返回
+//                        return originalResponse.newBuilder()
+//                                .body(new ProgressResponseBody(originalResponse.body(), progressListener))
+//                                .build();
+//                    }
+//                })
+//                .build();
         Call call = mOkHttpClient.newCall(request);
-        //添加到请求map里
         addCall(tag, call);
         call.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                OkError okError = getOkError("服务器连接异常，请稍后再试", 100);
-                sendFailedMessage(tag, okError);
+                OkError OkError = getOkError("服务器连接异常，请稍后再试");
+                sendFailedMessage(tag, OkError);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                File file = new File(AppConfig.getLocalProductDownloadPath(), getFileName(url));
+                //此处可以增加判断文件是否存在的逻辑
+
+                InputStream is = null;
+                byte[] buf = new byte[2048];
+                int len = 0;
+                FileOutputStream fos = null;
+                try {
+                    is = response.body().byteStream();
+                    long contentLen = response.body().contentLength();
+                    long downloadLen = 0;
+                    fos = new FileOutputStream(file);
+                    while ((len = is.read(buf)) != -1) {
+                        fos.write(buf, 0, len);
+                        downloadLen += len;
+                        Log.e("HPG", 100 * downloadLen / contentLen + "%");
+                        if (progressListener != null) {
+                            progressListener.onProgress(contentLen, downloadLen, downloadLen == contentLen);
+                        }
+                    }
+                    fos.flush();
+                    sendSuccessMessage(tag, file);
+
+                } catch (Exception e) {
+                    sendFailedMessage(tag, getOkError("下载失败"));
+                } finally {
+                    try {
+                        if (is != null) is.close();
+                    } catch (IOException e) {
+                    }
+                    try {
+                        if (fos != null) fos.close();
+                    } catch (IOException e) {
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * 处理post get upload返回结果  download单独处理
+     *
+     * @param tag
+     * @param request
+     * @param cls
+     */
+    private void deliveryRequest(final OkTag tag, final Request request, final Class<?> cls) {
+
+        Call call = mOkHttpClient.newCall(request);
+        addCall(tag, call);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                OkError OkError = getOkError("服务器连接异常，请稍后再试");
+                sendFailedMessage(tag, OkError);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
                 try {
                     String strResult = response.body().string();
                     L.i(TAG, "tag=" + tag + " result=" + strResult);
-                    Object result ;
+                    Object result;
                     if (cls != null) {
-                        Gson gson = getGson();
+                        Gson gson = new Gson();
                         result = gson.fromJson(strResult, cls);
                     } else { //没有指定类型，直接返回string
                         result = strResult;
                     }
                     if (result == null) {
-                        sendFailedMessage(tag, getOkError("数据为空", 100));
-                    }else {
+                        sendFailedMessage(tag, getOkError("数据为空"));
+                    } else {
                         sendSuccessMessage(tag, result);
                     }
 
 
                 } catch (Exception e) {
-                    sendFailedMessage(tag, getOkError("解析错误", 100));
+                    sendFailedMessage(tag, getOkError("解析错误"));
                 }
+
 
             }
         });
     }
 
+    /**
+     * 获得文件名
+     *
+     * @param path
+     * @return
+     */
+    private String getFileName(String path) {
+        int separatorIndex = path.lastIndexOf("/");
+        return (separatorIndex < 0) ? path : path.substring(separatorIndex + 1, path.length());
+    }
 
     /**
+     * package params
+     *
      * @param params
      * @return
      * @throws UnsupportedEncodingException
@@ -279,12 +431,29 @@ public class OkHttpManager {
     }
 
     /**
+     * the IResponseCallback matches the specified tag
+     *
      * @param iResponseCallback
      * @param tag
      * @return void
      * @throw
      */
     private void addCallback(OkTag tag, IResponseCallback iResponseCallback) {
+        if (iResponseCallback == null) {
+            mCallbacks.put(tag, new IResponseCallback() {
+                @Override
+                public void onSuccess(int tag, Object object) {
+
+                }
+
+                @Override
+                public void onError(int tag, OkError object) {
+
+                }
+
+            });
+            return;
+        }
         mCallbacks.put(tag, iResponseCallback);
 
     }
@@ -293,13 +462,24 @@ public class OkHttpManager {
         mAsyncCalls.put(tag, call);
     }
 
+    private Call getAndRemoveCall(OkTag tag) {
+        if (mAsyncCalls != null && mAsyncCalls.size() != 0 && mAsyncCalls.containsKey(tag)) {
+            Call call = mAsyncCalls.get(tag);
+            mAsyncCalls.remove(tag);
+            return call;
+        }
+        return null;
+    }
 
     /**
+     * get and remove IResponseCallback threw the specified tag
+     *
      * @param tag
      * @return IResponseCallback
      * @throw
      */
     private IResponseCallback getAndRemoveCallback(OkTag tag) {
+
         if (mCallbacks != null && mCallbacks.size() != 0 && mCallbacks.containsKey(tag)) {
             IResponseCallback iResponseCallback = mCallbacks.get(tag);
             L.i(TAG, "Before_removeTag_HashMap.size===" + mCallbacks.size());
@@ -315,58 +495,89 @@ public class OkHttpManager {
      * @throw
      */
     private void removeCallback(OkTag tag) {
-        if (mCallbacks != null && mCallbacks.size() != 0 && mCallbacks.containsKey(tag)) {
+        if (mCallbacks.containsKey(tag)) {
             mCallbacks.remove(tag);
         }
     }
 
     private void removeCall(OkTag tag) {
-        if (mAsyncCalls != null && mAsyncCalls.size() != 0 && mAsyncCalls.containsKey(tag)) {
+        if (mAsyncCalls.containsKey(tag)) {
             mAsyncCalls.remove(tag);
         }
     }
 
+    /**
+     * sendFailedMessage
+     *
+     * @param tag
+     * @param object
+     */
     private void sendSuccessMessage(OkTag tag, Object object) {
-        removeCall(tag);
+        //remove call while you request success
+        getAndRemoveCall(tag);
         IResponseCallback iResponseCallback = getAndRemoveCallback(tag);
         if (iResponseCallback != null) {
             Message message = getHandler().obtainMessage();
-            OkResult okResult = new OkResult(tag, object, iResponseCallback);
+            OkResult handlerBean = new OkResult(tag, object, iResponseCallback);
+            message.obj = handlerBean;
             message.arg1 = CODE_SUCCESS;
-            message.obj = okResult;
             message.sendToTarget();
         }
     }
 
-    private void sendFailedMessage(OkTag tag, OkError okError) {
-        removeCall(tag);
+    /**
+     * sendSuccessMessage
+     *
+     * @param tag
+     * @param OkError
+     */
+    private void sendFailedMessage(OkTag tag, OkError OkError) {
+        //remove call while you request failed
+        getAndRemoveCall(tag);
         IResponseCallback iResponseCallback = getAndRemoveCallback(tag);
         if (iResponseCallback != null) {
-            OkResult okResult = new OkResult(tag, okError, iResponseCallback);
+            OkResult handlerBean = new OkResult(tag, OkError, iResponseCallback);
             Message message = getHandler().obtainMessage();
-            message.obj = okResult;
+            message.obj = handlerBean;
             message.arg1 = CODE_FAILED;
             message.sendToTarget();
         }
     }
 
-    /**
-     * @return
-     */
-    private Gson getGson() {
-        if (mGson == null) {
 
-            mGson = new Gson();
+
+    private Handler getHandler() {
+        synchronized (OkHttpManager.class) {
+            if (mHandler == null) {
+                mHandler = new InternalHandler();
+            }
+            return mHandler;
         }
-        return mGson;
     }
 
-    public OkError getOkError(String msg, int status) {
-        OkError okError = new OkError(status, msg);
-        return okError;
+
+//    private Gson getGson() {
+//        if (mGson == null) {
+//            synchronized (OkHttpManager.class) {
+//                GsonBuilder builder = new GsonBuilder();
+//                builder.registerTypeAdapter(JsonInteger.class, new JsonIntegerTypeAdapter());
+//                builder.registerTypeAdapter(JsonFloat.class, new JsonFloatTypeAdapter());
+//                builder.registerTypeAdapter(JsonLong.class, new JsonLongTypeAdapter());
+//                mGson = builder.create();
+//            }
+//        }
+//        return mGson;
+//    }
+
+    private OkError getOkError(String msg) {
+        OkError OkError = new OkError("请求失败");
+        return OkError;
     }
 
     /**
+     * check weather tag has removed
+     * <p>if true exist  else removedx
+     *
      * @param tag
      * @return
      */
@@ -380,6 +591,9 @@ public class OkHttpManager {
     }
 
     /**
+     * cancel request
+     * <p> if calls contain the request ,remove it
+     *
      * @param tags
      */
     public void cancelRequest(int... tags) {
@@ -415,25 +629,12 @@ public class OkHttpManager {
         }
     }
 
-
     public void cancelAllRequest() {
         mAsyncCalls.clear();
         mCallbacks.clear();
     }
 
-    private Handler getHandler() {
-        synchronized (OkHttpManager.class) {
-            if (mInternalHandler == null) {
-                mInternalHandler = new InternalHandler();
-            }
-            return mInternalHandler;
-        }
-    }
-
-
-
-
-
+    //handle the result of the request
     private static class InternalHandler extends Handler {
         public InternalHandler() {
             super(Looper.getMainLooper());
@@ -441,21 +642,24 @@ public class OkHttpManager {
 
         @Override
         public void handleMessage(Message msg) {
-            //run on main thread
-            OkResult okResult = (OkResult) msg.obj;
-            IResponseCallback iResponseCallback = okResult.getResponseCallback();
-            OkTag tag = okResult.getTag();
+            OkResult handlerBean = (OkResult) msg.obj;
+            OkTag tag = handlerBean.getTag();
+            IResponseCallback iResponseCallback = handlerBean.getResponseCallback();
             switch (msg.arg1) {
                 case CODE_SUCCESS:
-                    Object object = okResult.getObject();
-                    iResponseCallback.onSuccess(tag.getTag(), object);
+                    Object object = handlerBean.getObject();
+                    if (tag != null) {
+                        iResponseCallback.onSuccess(tag.getTag(), object);
+                    }
                     break;
                 case CODE_FAILED:
-                    OkError okError = (OkError) okResult.getObject();
-                    iResponseCallback.onError(tag.getTag(), okError);
+                    OkError OkError = (OkError) handlerBean.getObject();
+                    T.showShort(MyApp.getApp(),OkError.getMsg());
+                    if (tag != null) {
+                        iResponseCallback.onError(tag.getTag(), OkError);
+                    }
                     break;
             }
         }
     }
-
 }
