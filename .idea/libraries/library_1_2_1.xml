@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="library-1.2.1">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.apkfuns.logutils/library/1.2.1/res" />
+      <root url="jar://$PROJECT_DIR$/app/build/intermediates/exploded-aar/com.apkfuns.logutils/library/1.2.1/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.apkfuns.logutils/library/1.2.1/563a83c2095a8af13714341b2f0079811fe2148b/library-1.2.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
