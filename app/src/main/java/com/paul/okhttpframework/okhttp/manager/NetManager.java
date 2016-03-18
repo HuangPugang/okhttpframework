@@ -1,5 +1,6 @@
 package com.paul.okhttpframework.okhttp.manager;
 
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -116,17 +117,24 @@ public class NetManager {
                                 requestParam.getParams(), cls);
                         break;
                     case DOWNLOAD:
-                        NetUtils.isWifi(new DialogFactory.OnDialogClickListener() {
-                            @Override
-                            public void confirm() {
-                                doDownload(tag, requestParam.getUrl(), callback, progressListener);
-                            }
-
-                            @Override
-                            public void cancel() {
-                                sendFailedMessage(tag, getOkError("已取消操作"));
-                            }
-                        });
+                        if (NetUtils.isWifi()) {
+                            doDownload(tag, requestParam.getUrl(), callback, progressListener);
+                        } else {
+                            DialogFactory.showAlertDialog(MyApp.getMyAppContext(), "温馨提示:", "当前为2G/3G/4G网络,是否继续操作?", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    doDownload(tag, requestParam.getUrl(), callback, progressListener);
+                                }
+                            }, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    sendFailedMessage(tag, getOkError("已取消操作!"));
+                                }
+                            });
+                        }
+                        ;
                         break;
                     case UPLOAD:
                         NetUtils.isWifi(new DialogFactory.OnDialogClickListener() {
@@ -319,12 +327,17 @@ public class NetManager {
                     long contentLen = response.body().contentLength();
                     long downloadLen = 0;
                     fos = new FileOutputStream(file);
+                    long currentPercent = 0;
                     while ((len = is.read(buf)) != -1) {
                         fos.write(buf, 0, len);
                         downloadLen += len;
-                        Log.e("HPG", 100 * downloadLen / contentLen + "%");
                         if (progressListener != null) {
-                            progressListener.onProgress(contentLen, downloadLen, downloadLen == contentLen);
+
+                            if (downloadLen * 100 / contentLen - currentPercent  >= 1) {
+                                currentPercent =downloadLen * 100 / contentLen;
+                                progressListener.onProgress(downloadLen, contentLen, currentPercent);
+                            }
+
                         }
                     }
                     fos.flush();
@@ -544,7 +557,6 @@ public class NetManager {
     }
 
 
-
     private Handler getHandler() {
         synchronized (NetManager.class) {
             if (mHandler == null) {
@@ -653,7 +665,7 @@ public class NetManager {
                     break;
                 case CODE_FAILED:
                     OkError OkError = (OkError) handlerBean.getObject();
-                    T.showShort(MyApp.getApp(),OkError.getMsg());
+                    T.showShort(MyApp.getApp(), OkError.getMsg());
                     if (tag != null) {
                         iResponseCallback.onError(tag.getTag(), OkError);
                     }

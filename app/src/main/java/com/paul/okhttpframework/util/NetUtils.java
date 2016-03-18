@@ -138,7 +138,23 @@ public class NetUtils {
 			return false;
 		}
 	}
+	public static boolean isWifi(){
+		ConnectivityManager manager = (ConnectivityManager) MyApp.getMyAppContext()
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
 
+		State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
+				.getState();
+		State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
+				.getState();
+		if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
+
+		}
+		if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
+			return true;
+		}else {
+			return false;
+		}
+	}
 	public static boolean isNetAvailable() {
 
 		if (!NetUtils.isConnected(MyApp.getMyAppContext())) {

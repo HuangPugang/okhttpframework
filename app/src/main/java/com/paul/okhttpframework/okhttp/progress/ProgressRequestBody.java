@@ -92,7 +92,7 @@ public class ProgressRequestBody extends RequestBody {
                 //增加当前写入的字节数
                 bytesWritten += byteCount;
                 //回调
-                progressListener.onProgress(bytesWritten, contentLength, bytesWritten == contentLength);
+                progressListener.onProgress(bytesWritten, contentLength, bytesWritten/contentLength);
             }
         };
     }

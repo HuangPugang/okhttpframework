@@ -86,7 +86,7 @@ public class ProgressResponseBody extends ResponseBody {
                 //增加当前读取的字节数，如果读取完成了bytesRead会返回-1
                 totalBytesRead += bytesRead != -1 ? bytesRead : 0;
                 //回调，如果contentLength()不知道长度，会返回-1
-                progressListener.onProgress(totalBytesRead, responseBody.contentLength(), bytesRead == -1);
+                progressListener.onProgress(totalBytesRead, responseBody.contentLength(), totalBytesRead/responseBody.contentLength());
                 return bytesRead;
             }
         };
