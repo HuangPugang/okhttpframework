@@ -15,7 +15,7 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.google.gson.annotations.SerializedName;
-import com.paul.okhttpframework.application.MyApp;
+import com.paul.okhttpframework.MyApp;
 
 import java.io.File;
 import java.io.FileWriter;

@@ -6,14 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
-import com.paul.okhttpframework.application.MyApp;
-import com.paul.okhttpframework.okhttp.API;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
 import com.paul.okhttpframework.okhttp.manager.OkClient;
 import com.paul.okhttpframework.okhttp.manager.ParamManager;
 import com.paul.okhttpframework.okhttp.progress.ProgressListener;
-import com.paul.okhttpframework.util.NetUtils;
 
 import java.io.File;
 
@@ -89,10 +86,21 @@ public class MainActivity extends AppCompatActivity {
      * @param v
      */
     public void download(View v){
-        OkClient.download(ParamManager.download(), null, null, new ProgressListener() {
+        OkClient.download(ParamManager.download(), null, new IResponseCallback() {
+            @Override
+            public void onSuccess(int tag, Object object) {
+                Log.e("hpg","SUCCESS");
+            }
+
+            @Override
+            public void onError(int tag, OkError error) {
+                Log.e("hpg","onError");
+
+            }
+        }, new ProgressListener() {
             @Override
             public void onProgress(long bytesWritten, long contentLength, long percent) {
-                Log.e("HPG",percent+"%");
+                Log.e("HPG", percent + "%");
             }
         });
     }

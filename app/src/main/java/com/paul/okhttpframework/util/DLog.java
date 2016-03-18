@@ -5,7 +5,7 @@ import android.util.Log;
 /**
  * 日志打印类
  */
-public class L {
+public class DLog {
 
 	public final static int VERBOSE = 5; // 不过滤输出所有调试信息 包括
 											// VERBOSE、DEBUG、INFO、WARN、ERROR

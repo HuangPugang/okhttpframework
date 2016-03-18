@@ -1,12 +1,7 @@
-package com.paul.okhttpframework.application;
+package com.paul.okhttpframework;
 
 import android.app.Application;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.text.TextUtils;
-import android.widget.Toast;
 
 /**
  * Created by Paul on 15/12/3.

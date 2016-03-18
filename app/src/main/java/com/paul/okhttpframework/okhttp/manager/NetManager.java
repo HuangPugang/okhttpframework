@@ -1,13 +1,10 @@
 package com.paul.okhttpframework.okhttp.manager;
 
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 
 import com.google.gson.Gson;
-import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.bean.OkResult;
 import com.paul.okhttpframework.okhttp.bean.OkTag;
@@ -16,10 +13,8 @@ import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
 import com.paul.okhttpframework.okhttp.progress.ProgressListener;
 import com.paul.okhttpframework.okhttp.progress.ProgressRequestBody;
 import com.paul.okhttpframework.util.AppConfig;
-import com.paul.okhttpframework.util.DialogFactory;
-import com.paul.okhttpframework.util.L;
-import com.paul.okhttpframework.util.NetUtils;
-import com.paul.okhttpframework.util.T;
+import com.paul.okhttpframework.util.DLog;
+import com.paul.okhttpframework.util.NetUtil;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -105,7 +100,7 @@ public class NetManager {
             sendFailedMessage(tag, getOkError("参数错误"));
             return;
         }
-        if (NetUtils.isNetAvailable()) {
+        if (NetUtil.isNetAvailable()) {
             try {
                 switch (requestParam.getMethod()) {
                     case GET:
@@ -117,43 +112,17 @@ public class NetManager {
                                 requestParam.getParams(), cls);
                         break;
                     case DOWNLOAD:
-                        if (NetUtils.isWifi()) {
-                            doDownload(tag, requestParam.getUrl(), callback, progressListener);
-                        } else {
-                            DialogFactory.showAlertDialog(MyApp.getMyAppContext(), "温馨提示:", "当前为2G/3G/4G网络,是否继续操作?", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    doDownload(tag, requestParam.getUrl(), callback, progressListener);
-                                }
-                            }, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                    sendFailedMessage(tag, getOkError("已取消操作!"));
-                                }
-                            });
-                        }
-                        ;
+                        doDownload(tag, requestParam.getUrl(), callback, progressListener);
                         break;
                     case UPLOAD:
-                        NetUtils.isWifi(new DialogFactory.OnDialogClickListener() {
-                            @Override
-                            public void confirm() {
-                                doUpload(tag, requestParam.getUrl(), requestParam.getParams(),
-                                        requestParam.getFiles(), cls, callback, progressListener);
-                            }
-
-                            @Override
-                            public void cancel() {
-                                sendFailedMessage(tag, getOkError("已取消操作"));
-                            }
-                        });
+                        doUpload(tag, requestParam.getUrl(), requestParam.getParams(),
+                                requestParam.getFiles(), cls, callback, progressListener);
 
                         break;
                 }
             } catch (Exception e) {
                 //unexpected error
+                e.printStackTrace();
                 sendFailedMessage(tag, new OkError("请求失败"));
             }
         } else {
@@ -182,7 +151,7 @@ public class NetManager {
         } else {
             requestUrl = url;
         }
-        L.i(TAG, "tag=" + tag.getTag() + " GET:" + requestUrl);
+        DLog.i(TAG, "tag=" + tag.getTag() + " GET:" + requestUrl);
         Request.Builder requestBuilder = new Request.Builder();
         if (null != headers && !headers.isEmpty() && headers.size() != 0) {
             for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -226,8 +195,8 @@ public class NetManager {
                 }
             }
         }
-        L.i(TAG, "tag=" + tag.getTag() + " POST:" + url);
-        L.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
+        DLog.i(TAG, "tag=" + tag.getTag() + " POST:" + url);
+        DLog.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
         Request request = requestBuilder
                 .url(url)
                 .post(formBody)
@@ -237,8 +206,8 @@ public class NetManager {
 
     //fileupload
     private void doUpload(final OkTag tag, String url, Map<String, String> params, Map<String, File> files, final Class<?> cls, IResponseCallback callback, ProgressListener progressListener) {
-        L.i(TAG, url);
-        L.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
+        DLog.i(TAG, url);
+        DLog.i(TAG, "tag=" + tag.getTag() + " params= " + params.toString());
         MultipartBody.Builder builder = new MultipartBody.Builder();
         if (params != null && !params.isEmpty() && params.size() != 0) {
             for (Map.Entry<String, String> entry : params.entrySet()) {
@@ -333,8 +302,8 @@ public class NetManager {
                         downloadLen += len;
                         if (progressListener != null) {
 
-                            if (downloadLen * 100 / contentLen - currentPercent  >= 1) {
-                                currentPercent =downloadLen * 100 / contentLen;
+                            if (downloadLen * 100 / contentLen - currentPercent >= 1) {
+                                currentPercent = downloadLen * 100 / contentLen;
                                 progressListener.onProgress(downloadLen, contentLen, currentPercent);
                             }
 
@@ -344,6 +313,7 @@ public class NetManager {
                     sendSuccessMessage(tag, file);
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     sendFailedMessage(tag, getOkError("下载失败"));
                 } finally {
                     try {
@@ -382,7 +352,7 @@ public class NetManager {
 
                 try {
                     String strResult = response.body().string();
-                    L.i(TAG, "tag=" + tag.getTag() + " result=" + strResult);
+                    DLog.i(TAG, "tag=" + tag.getTag() + " result=" + strResult);
                     Object result;
                     if (cls != null) {
                         Gson gson = new Gson();
@@ -398,6 +368,7 @@ public class NetManager {
 
 
                 } catch (Exception e) {
+                    e.printStackTrace();
                     sendFailedMessage(tag, getOkError("解析错误"));
                 }
 
@@ -494,7 +465,7 @@ public class NetManager {
 
         if (mCallbacks != null && mCallbacks.size() != 0 && mCallbacks.containsKey(tag)) {
             IResponseCallback iResponseCallback = mCallbacks.get(tag);
-            L.i(TAG, "Before_removeTag_HashMap.size===" + mCallbacks.size());
+            DLog.i(TAG, "Before_removeTag_HashMap.size===" + mCallbacks.size());
             mCallbacks.remove(tag);
             return iResponseCallback;
         }
@@ -665,7 +636,6 @@ public class NetManager {
                     break;
                 case CODE_FAILED:
                     OkError OkError = (OkError) handlerBean.getObject();
-                    T.showShort(MyApp.getApp(), OkError.getMsg());
                     if (tag != null) {
                         iResponseCallback.onError(tag.getTag(), OkError);
                     }

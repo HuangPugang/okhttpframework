@@ -13,12 +13,12 @@ import android.net.NetworkInfo.State;
 import android.widget.Toast;
 
 import com.paul.okhttpframework.R;
-import com.paul.okhttpframework.application.MyApp;
+import com.paul.okhttpframework.MyApp;
 
 
-public class NetUtils {
+public class NetUtil {
 
-	private NetUtils() {
+	private NetUtil() {
 		/* cannot be instantiated */
 		throw new UnsupportedOperationException("cannot be instantiated");
 	}
@@ -104,40 +104,6 @@ public class NetUtils {
 		builder.create();
 		builder.show();
 	}
-	/**
-	 * 是否为WiFi
-	 * @return
-	 */
-	public static boolean isWifi(final DialogFactory.OnDialogClickListener listener){
-		ConnectivityManager manager = (ConnectivityManager) MyApp.getMyAppContext()
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-		State gprs = manager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE)
-				.getState();
-		State wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)
-				.getState();
-		if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
-
-		}
-		if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
-			return true;
-		}else {
-			DialogFactory.showAlertDialog(MyApp.getMyAppContext(), "温馨提示:", "当前为2G/3G/4G网络,是否继续操作?", new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					listener.confirm();
-				}
-			}, new DialogInterface.OnClickListener() {
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					dialog.dismiss();
-					listener.cancel();
-				}
-			});
-			return false;
-		}
-	}
 	public static boolean isWifi(){
 		ConnectivityManager manager = (ConnectivityManager) MyApp.getMyAppContext()
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -157,9 +123,9 @@ public class NetUtils {
 	}
 	public static boolean isNetAvailable() {
 
-		if (!NetUtils.isConnected(MyApp.getMyAppContext())) {
+		if (!NetUtil.isConnected(MyApp.getMyAppContext())) {
 			// "当前网络已断开,请检查网络后重试");
-			T.showShort(MyApp.getMyAppContext(), "当前网络已断开,请检查网络后重试");
+			ToastUtil.showShort(MyApp.getMyAppContext(), "当前网络已断开,请检查网络后重试");
 			return false;
 
 		}
