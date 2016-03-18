@@ -1,14 +1,17 @@
 package com.paul.okhttpframework.okhttp;
 
+import com.paul.okhttpframework.okhttp.manager.NetManager;
+
 /**
  * Created by Paul on 16/1/31.
  */
 public class API {
-    public static final int GET=0;
-    public static final int POST=1;
-    public static final int PUT=2;
-    public static final int DELETE=3;
-    public static final int UPLOAD=4;
+    public static final int GET= NetManager.GET;
+    public static final int POST=NetManager.POST;
+    public static final int PUT=NetManager.PUT;
+    public static final int DELETE=NetManager.DELETE;
+    public static final int UPLOAD=NetManager.UPLOAD;
+    public static final int DOWNLOAD=NetManager.DOWNLOAD;
 
     public static final String SERVER_URL ="http://www.tngou.net";
 

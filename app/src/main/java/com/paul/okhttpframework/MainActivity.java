@@ -9,21 +9,19 @@ import com.paul.okhttpframework.okhttp.API;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.callback.IResponseCallback;
 import com.paul.okhttpframework.okhttp.manager.OkClient;
-import com.paul.okhttpframework.okhttp.manager.OkParamManager;
+import com.paul.okhttpframework.okhttp.manager.ParamManager;
 import com.paul.okhttpframework.util.NetUtils;
 
 /**
  * how to use
  */
 public class MainActivity extends AppCompatActivity {
-    OkClient mOkClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOkClient = OkClient.getInstance();
         setContentView(R.layout.activity_main);
         NetUtils.isNetworkAvailable(MyApp.getMyAppContext());
-        OkClient.getInstance().dispatchRequest(API.TAG_NEWS_LIST, OkParamManager.getNewsListParam(1,8), RequestResult.class, new IResponseCallback() {
+        OkClient.request(ParamManager.getNewsListParam(1, 8), RequestResult.class, new IResponseCallback() {
             @Override
             public void onSuccess(int tag, Object object) {
                 RequestResult requestResult = (RequestResult) object;

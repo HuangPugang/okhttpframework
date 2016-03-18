@@ -28,7 +28,7 @@ public class OkClient {
      */
     public static void request(RequestParam param, Class<?> cls, IResponseCallback callback) {
         OkTag OkTag = new OkTag(param.getTag());
-        OkHttpManager.getInstance().request(OkTag, param, cls, callback, null);
+        NetManager.getInstance().request(OkTag, param, cls, callback, null);
     }
 
     /**
@@ -40,7 +40,7 @@ public class OkClient {
      */
     public static void upload(RequestParam param, Class<?> cls, IResponseCallback callback) {
         OkTag OkTag = new OkTag(param.getTag());
-        OkHttpManager.getInstance().request(OkTag, param, cls, callback, null);
+        NetManager.getInstance().request(OkTag, param, cls, callback, null);
     }
 
     /**
@@ -53,7 +53,7 @@ public class OkClient {
      */
     public static void upload(RequestParam param, Class<?> cls, IResponseCallback callback, ProgressListener listener) {
         OkTag OkTag = new OkTag(param.getTag());
-        OkHttpManager.getInstance().request(OkTag, param, cls, callback, listener);
+        NetManager.getInstance().request(OkTag, param, cls, callback, listener);
     }
 
     /**
@@ -65,7 +65,7 @@ public class OkClient {
      */
     public static void download(RequestParam param, Class<?> cls, IResponseCallback callback) {
         OkTag OkTag = new OkTag(param.getTag());
-        OkHttpManager.getInstance().request(OkTag, param, cls, callback, null);
+        NetManager.getInstance().request(OkTag, param, cls, callback, null);
     }
 
     /**
@@ -78,7 +78,7 @@ public class OkClient {
      */
     public static void download(RequestParam param, Class<?> cls, IResponseCallback callback, ProgressListener listener) {
         OkTag OkTag = new OkTag(param.getTag());
-        OkHttpManager.getInstance().request(OkTag, param, cls, callback, listener);
+        NetManager.getInstance().request(OkTag, param, cls, callback, listener);
     }
 
     /**
@@ -87,11 +87,11 @@ public class OkClient {
      * @param tag
      */
     public void cancelRequest(int... tag) {
-        OkHttpManager.getInstance().cancelRequest(tag);
+        NetManager.getInstance().cancelRequest(tag);
     }
 
     public void cancelAllRequest() {
-        OkHttpManager.getInstance().cancelAllRequest();
+        NetManager.getInstance().cancelAllRequest();
 
     }
 }

@@ -119,7 +119,6 @@ public class NetUtils {
 		if (gprs == State.CONNECTED || gprs == State.CONNECTING) {
 
 		}
-		// 判断为wifi状态下才加载广告，如果是GPRS手机网络则不加载！
 		if (wifi == State.CONNECTED || wifi == State.CONNECTING) {
 			return true;
 		}else {

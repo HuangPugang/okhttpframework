@@ -7,10 +7,10 @@ import com.paul.okhttpframework.okhttp.bean.RequestParam;
 /**
  * 参数管理类,所有方法都是静态方法，不能获得该类的实例
  */
-public class OkParamManager {
-    private static final String TAG = OkParamManager.class.getSimpleName();
+public class ParamManager {
+    private static final String TAG = ParamManager.class.getSimpleName();
 
-    private OkParamManager() {
+    private ParamManager() {
 
     }
 

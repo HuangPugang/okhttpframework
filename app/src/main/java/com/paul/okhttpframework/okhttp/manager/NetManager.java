@@ -6,7 +6,6 @@ import android.os.Message;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.paul.okhttpframework.application.MyApp;
 import com.paul.okhttpframework.okhttp.bean.OkError;
 import com.paul.okhttpframework.okhttp.bean.OkResult;
@@ -47,7 +46,7 @@ import okhttp3.Response;
 /**
  * 网络管理页面
  */
-public class OkHttpManager {
+public class NetManager {
     public static final int GET = 100;
     public static final int POST = 101;
     public static final int PUT = 102;
@@ -55,13 +54,13 @@ public class OkHttpManager {
     public static final int DOWNLOAD = 104;
     public static final int UPLOAD = 105;
 
-    private static final String TAG = OkHttpManager.class.getSimpleName();
+    private static final String TAG = NetManager.class.getSimpleName();
     private static final int DEFAULT_TIME_OUT = 15000;
     private static final int CODE_SUCCESS = 0;
     private static final int CODE_FAILED = 1;
     private static final int CODE_TOKEN_ERROR = 2;
 
-    private static OkHttpManager sInstance;
+    private static NetManager sInstance;
     //handler the result of request
     private OkHttpClient mOkHttpClient;
     private InternalHandler mHandler;
@@ -71,9 +70,9 @@ public class OkHttpManager {
     //request calls
     private ConcurrentHashMap<OkTag, Call> mAsyncCalls = new ConcurrentHashMap<>();
 
-    private OkHttpManager() {
+    private NetManager() {
         if (mOkHttpClient == null) {
-            synchronized (OkHttpManager.class) {
+            synchronized (NetManager.class) {
                 mOkHttpClient = new OkHttpClient.Builder()
                         .connectTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
                         .writeTimeout(DEFAULT_TIME_OUT, TimeUnit.MILLISECONDS)
@@ -83,10 +82,10 @@ public class OkHttpManager {
         }
     }
 
-    public static OkHttpManager getInstance() {
+    public static NetManager getInstance() {
         if (null == sInstance) {
-            synchronized (OkHttpManager.class) {
-                sInstance = new OkHttpManager();
+            synchronized (NetManager.class) {
+                sInstance = new NetManager();
             }
         }
         return sInstance;
@@ -370,7 +369,7 @@ public class OkHttpManager {
 
                 try {
                     String strResult = response.body().string();
-                    L.i(TAG, "tag=" + tag + " result=" + strResult);
+                    L.i(TAG, "tag=" + tag.getTag() + " result=" + strResult);
                     Object result;
                     if (cls != null) {
                         Gson gson = new Gson();
@@ -547,7 +546,7 @@ public class OkHttpManager {
 
 
     private Handler getHandler() {
-        synchronized (OkHttpManager.class) {
+        synchronized (NetManager.class) {
             if (mHandler == null) {
                 mHandler = new InternalHandler();
             }
@@ -558,7 +557,7 @@ public class OkHttpManager {
 
 //    private Gson getGson() {
 //        if (mGson == null) {
-//            synchronized (OkHttpManager.class) {
+//            synchronized (NetManager.class) {
 //                GsonBuilder builder = new GsonBuilder();
 //                builder.registerTypeAdapter(JsonInteger.class, new JsonIntegerTypeAdapter());
 //                builder.registerTypeAdapter(JsonFloat.class, new JsonFloatTypeAdapter());
