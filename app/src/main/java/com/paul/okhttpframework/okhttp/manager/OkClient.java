@@ -10,10 +10,6 @@ import com.paul.okhttpframework.okhttp.progress.ProgressListener;
  * Created by Paul on 15/12/8.
  */
 public class OkClient {
-
-
-
-
     private static String TAG = OkClient.class.getSimpleName();
 
     private OkClient() {
@@ -86,11 +82,11 @@ public class OkClient {
      *
      * @param tag
      */
-    public void cancelRequest(int... tag) {
+    public static void cancelRequest(int... tag) {
         NetManager.getInstance().cancelRequest(tag);
     }
 
-    public void cancelAllRequest() {
+    public static void cancelAllRequest() {
         NetManager.getInstance().cancelAllRequest();
 
     }
